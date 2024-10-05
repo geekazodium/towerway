@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://ddu6j7d1e1je2"]
+
+[ext_resource type="Texture2D" uid="uid://hc0jekohar55" path="res://tilemap/icon.svg" id="1_twcbx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cyphp"]
+size = Vector2(26, 26)
+
+[node name="DeleteAfter" type="DeleteAfter"]
+delay = 2.0
+
+[node name="SmallProjectile2" type="SmallProjectile" parent="." node_paths=PackedStringArray("hitbox")]
+speed = 400.0
+direction = 0.25
+power = 1
+hitbox = NodePath("Hitbox")
+
+[node name="Hellfire" type="Sprite2D" parent="SmallProjectile2"]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("1_twcbx")
+
+[node name="Hitbox" type="Area2D" parent="SmallProjectile2"]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SmallProjectile2/Hitbox"]
+shape = SubResource("RectangleShape2D_cyphp")
+
+[node name="SmallProjectile3" type="SmallProjectile" parent="." node_paths=PackedStringArray("hitbox")]
+speed = 400.0
+direction = 0.75
+power = 1
+hitbox = NodePath("Hitbox")
+
+[node name="Hellfire" type="Sprite2D" parent="SmallProjectile3"]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("1_twcbx")
+
+[node name="Hitbox" type="Area2D" parent="SmallProjectile3"]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SmallProjectile3/Hitbox"]
+shape = SubResource("RectangleShape2D_cyphp")
