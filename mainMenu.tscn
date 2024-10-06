@@ -1,0 +1,85 @@
+[gd_scene load_steps=15 format=3 uid="uid://dv64nc0dvvm48"]
+
+[ext_resource type="Texture2D" uid="uid://tohqb3at7l1o" path="res://sprites/UI/cover.png" id="1_qok7q"]
+[ext_resource type="Texture2D" uid="uid://cus8g62l77rqu" path="res://sprites/UI/press to start.png" id="2_21abt"]
+[ext_resource type="Script" path="res://scripts/UI/MainMenuSprite.cs" id="3_iqtwe"]
+[ext_resource type="Script" path="res://scripts/UI/LevelSelection.cs" id="4_inpal"]
+[ext_resource type="Texture2D" uid="uid://cjhfcm8qscj8a" path="res://sprites/UI/level selection .png" id="5_68k4s"]
+[ext_resource type="Texture2D" uid="uid://2abe5bj16da2" path="res://sprites/UI/level1 icon.png" id="6_wfxag"]
+[ext_resource type="Script" path="res://scripts/UI/LevelIcon.cs" id="7_6pyk7"]
+[ext_resource type="Texture2D" uid="uid://bfhbwik5jsj28" path="res://sprites/UI/level1 icon_selected.png" id="8_iueo4"]
+[ext_resource type="Texture2D" uid="uid://d2tipmq6mymmr" path="res://sprites/UI/level2 icon_selected.png" id="9_inho6"]
+[ext_resource type="Texture2D" uid="uid://bl7yhtxem7eou" path="res://sprites/UI/level2 icon.png" id="9_pwrrk"]
+[ext_resource type="Texture2D" uid="uid://l7ct1xrkdprp" path="res://sprites/UI/level3 icon.png" id="10_bfoi6"]
+[ext_resource type="Texture2D" uid="uid://dtnxiaowyf7j" path="res://sprites/UI/level4 icon.png" id="11_brqc1"]
+[ext_resource type="Texture2D" uid="uid://bivfauf6os12k" path="res://sprites/UI/level3 icon_selected.png" id="11_cf87f"]
+[ext_resource type="Texture2D" uid="uid://bbhe6fl4x1lay" path="res://sprites/UI/level4 icon_selected.png" id="13_dj5d0"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("1_qok7q")
+
+[node name="PressToStart" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("2_21abt")
+script = ExtResource("3_iqtwe")
+
+[node name="LevelSelection" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1922.0
+offset_bottom = 1079.0
+script = ExtResource("4_inpal")
+
+[node name="Sprite2D" type="Sprite2D" parent="LevelSelection"]
+position = Vector2(960, 540)
+texture = ExtResource("5_68k4s")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelSelection"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 370.0
+offset_right = 2152.0
+offset_bottom = 870.0
+scale = Vector2(0.8, 0.8)
+
+[node name="Level1Button" type="TextureButton" parent="LevelSelection/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_wfxag")
+texture_pressed = ExtResource("8_iueo4")
+texture_hover = ExtResource("8_iueo4")
+script = ExtResource("7_6pyk7")
+metadata/Location = "res://level_1.tscn"
+
+[node name="Level2Button" type="TextureButton" parent="LevelSelection/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("9_pwrrk")
+texture_pressed = ExtResource("9_inho6")
+texture_hover = ExtResource("9_inho6")
+script = ExtResource("7_6pyk7")
+metadata/Location = ""
+
+[node name="Level3Button" type="TextureButton" parent="LevelSelection/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("10_bfoi6")
+texture_pressed = ExtResource("11_cf87f")
+texture_hover = ExtResource("11_cf87f")
+script = ExtResource("7_6pyk7")
+metadata/Location = ""
+
+[node name="Level4Button" type="TextureButton" parent="LevelSelection/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("11_brqc1")
+texture_pressed = ExtResource("13_dj5d0")
+texture_hover = ExtResource("13_dj5d0")
+script = ExtResource("7_6pyk7")
+metadata/Location = ""
