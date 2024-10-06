@@ -6,5 +6,7 @@
 /target/debug/.cargo-lock
 /target/debug/~rust_lib.dll
 /target/debug/rust_lib.d
+/target/debug/rust_lib.dll.exp
+/target/debug/rust_lib.dll.lib
 /target/.rustc_info.json
 /target/CACHEDIR.TAG
