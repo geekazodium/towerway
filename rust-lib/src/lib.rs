@@ -43,40 +43,17 @@ struct DefenseLayer{
     update_phys_interval: i32,
     phys_clock: i32,
     #[export]
-    rect: Rect2i,
-    last_mouse_pos: Vector2i,
-    pause: f64
+    rect: Rect2i
 }
 
 #[godot_api]
 impl ITileMapLayer for DefenseLayer {
-    fn physics_process(&mut self, delta: f64){
+    fn physics_process(&mut self, _delta: f64){
         self.phys_clock += 1;
-        if self.pause > 0.{
-            self.pause -= delta;
-            return;
-        }
         if self.phys_clock >= self.update_phys_interval{
             self.phys_clock = 0;
             self.update_tiles();
         }
-    }
-    fn process(&mut self, _delta: f64){
-        let mouse_tile = Self::get_mouse_tile(self.base().get_viewport().expect("no valid viewport"));
-        if Input::singleton().is_action_just_pressed("place_cell".into()) || 
-            (Input::singleton().is_action_pressed("place_cell".into()) && self.last_mouse_pos != mouse_tile){
-            
-            let rules = CellRules::from_tile(self.base().get_cell_tile_data(mouse_tile));
-            if rules.user_replaceable(){
-                self.base_mut().set_cell_ex(mouse_tile).source_id(0).atlas_coords(CellRules::BasicFilled.to_atlas_coords()).done();
-            }
-            self.last_mouse_pos = mouse_tile;
-        }
-
-        if Input::singleton().is_action_pressed("place_cell".into()){
-            self.pause = 0.5;
-        }
-
     }
 }
 
@@ -91,10 +68,6 @@ impl DefenseLayer{
 }
 
 impl DefenseLayer{
-    fn get_mouse_tile(viewport: Gd<Viewport>)-> Vector2i{
-        let pos = viewport.get_camera_2d().expect("no valid camera2d").get_global_mouse_position();
-        (pos / TILE_SIZE).floor().cast_int()
-    }
     fn update_tiles(&mut self){
         let rect = self.rect.clone();
         let pos = rect.position;
@@ -183,6 +156,14 @@ impl CellRules{
             Self::Empty=>1,
             Self::BasicFilled=>2,
             Self::PermaCell=>3,
+        }
+    }
+    fn to_cost(&self)->i32{
+        match self{
+            Self::Empty => 1,
+            Self::BasicFilled => 2,
+            Self::PermaCell => panic!("user probably shouldn't be able to place these, too op"),
+            Self::ForceEmpty => 0
         }
     }
     fn can_set(&self)-> bool{
@@ -425,12 +406,17 @@ struct EnemySpawner{
     #[export]
     timer: f64,
     #[export]
-    enemies: Option<Gd<PackedScene>>
+    enemies: Option<Gd<PackedScene>>,
+    #[export]
+    enabled: bool
 }
 
 #[godot_api]
 impl INode for EnemySpawner{
     fn physics_process(&mut self, delta: f64){
+        if !self.get_enabled(){
+            return;
+        }
         self.timer += delta;
         if self.timer > self.interval{
             self.timer = 0.;
@@ -439,4 +425,95 @@ impl INode for EnemySpawner{
             parent.add_child(instance);
         }
     }
+}
+
+#[derive(GodotClass)]
+#[class(base = TileMapLayer, init)]
+struct CellPattern{
+    base: Base<TileMapLayer>,
+    #[export]
+    bounds: Rect2i,
+    last_mouse_pos: Vector2i,
+    #[export]
+    target: Option<Gd<TileMapLayer>>,
+    #[export]
+    preview: Option<Gd<TileMapLayer>>
+}
+
+#[godot_api]
+impl ITileMapLayer for CellPattern{
+    fn process(&mut self, _delta: f64){
+        let mouse_tile = Self::get_mouse_tile(self.base().get_viewport().expect("no valid viewport"));
+        if Input::singleton().is_action_just_pressed("place_cell".into()) || 
+            (Input::singleton().is_action_pressed("place_cell".into()) && self.last_mouse_pos != mouse_tile){
+            
+            let rules = CellRules::from_tile(self.base().get_cell_tile_data(mouse_tile));
+            if rules.user_replaceable(){
+                self.base_mut().set_cell_ex(mouse_tile).source_id(0).atlas_coords(CellRules::BasicFilled.to_atlas_coords()).done();
+            }
+            self.last_mouse_pos = mouse_tile;
+        }
+
+        if Input::singleton().is_action_just_pressed("place_pattern".into()){
+            self.place(self.target.clone().unwrap(), mouse_tile, true);
+        }
+        self.update_hover(self.preview.clone().unwrap(), mouse_tile);
+    }
+}
+
+
+#[godot_api]
+impl CellPattern{
+    fn get_mouse_tile(viewport: Gd<Viewport>)-> Vector2i{
+        let pos = viewport.get_camera_2d().expect("no valid camera2d").get_global_mouse_position();
+        (pos / TILE_SIZE).floor().cast_int()
+    }
+    #[func]
+    pub fn get_cost(&self) -> i32{
+        let mut cost = 0;
+        let cells = self.base().get_used_cells();
+        for cell_pos in cells.iter_shared(){
+            let tile = self.base().get_cell_tile_data(cell_pos);
+            let cell_rules = CellRules::from_tile(tile);
+            cost += cell_rules.to_cost();
+        }
+        cost
+    }
+    #[func]
+    pub fn get_center(&self)-> Vector2{
+        let cells = self.base().get_used_cells();
+        let mut average = Vector2::new(0.,0.);
+        let mut count = 0;
+        for cell_pos in cells.iter_shared(){
+            count += 1;
+            average = average.lerp(cell_pos.cast_float(), 1./count as f32);
+        }
+        average
+    }
+    #[func]
+    pub fn place(&self, mut target: Gd<TileMapLayer>, center: Vector2i, check_valid: bool){
+        let cells_center = self.get_center();
+        let cells = self.base().get_used_cells();
+        for cell_pos in cells.iter_shared(){
+            let pos = cell_pos + center - cells_center.cast_int();
+            let cell_data = self.base().get_cell_tile_data(cell_pos);
+            let cell_rules = CellRules::from_tile(cell_data);
+
+            let target_tile = CellRules::from_tile(target.get_cell_tile_data(pos));
+            if target_tile.can_set() || !check_valid{
+                target.set_cell_ex(pos).source_id(0).atlas_coords(cell_rules.to_atlas_coords()).done();
+            }
+        }
+    }
+    #[func]
+    pub fn update_hover(&self, mut preview: Gd<TileMapLayer>,center: Vector2i){
+        preview.clear();
+        self.place(preview, center, false);
+    }
+}
+
+#[derive(GodotClass)]
+#[class(base = Node2D,init)]
+struct TickingGroup{
+    base: Base<Node2D>
 }

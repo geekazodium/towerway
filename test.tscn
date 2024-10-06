@@ -1,15 +1,20 @@
-[gd_scene load_steps=6 format=4 uid="uid://cntownvnqqh3"]
+[gd_scene load_steps=8 format=4 uid="uid://cntownvnqqh3"]
 
 [ext_resource type="TileSet" uid="uid://c5u80tio66lj4" path="res://tilemap/test.tres" id="1_fy28o"]
 [ext_resource type="PackedScene" uid="uid://41wb4hgqmteh" path="res://projectiles/hellfire.tscn" id="2_12oc1"]
 [ext_resource type="PackedScene" uid="uid://ddu6j7d1e1je2" path="res://projectiles/weak.tscn" id="2_rj33p"]
 [ext_resource type="PackedScene" uid="uid://croilwjccd5pk" path="res://enemies/basic_test_enemy.tscn" id="3_34s3v"]
+[ext_resource type="Shader" path="res://tilemap/transparency.gdshader" id="5_bnujo"]
 
 [sub_resource type="Curve2D" id="Curve2D_xsopq"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, 0, 384, 0, 0, 0, 0, 160, 384, 0, 0, 0, 0, 160, 128, 0, 0, 0, 0, 384, 128, 0, 0, 0, 0, 384, 352, 0, 0, 0, 0, 704, 352, 0, 0, 0, 0, 704, 512, 0, 0, 0, 0, 832, 512)
 }
 point_count = 8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8p1uy"]
+shader = ExtResource("5_bnujo")
+shader_parameter/transparency = 0.3
 
 [node name="Node2D" type="Node2D"]
 
@@ -37,3 +42,14 @@ enemies = ExtResource("3_34s3v")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(416, 320)
+
+[node name="CellPattern" type="CellPattern" parent="." node_paths=PackedStringArray("target", "preview")]
+bounds = Rect2i(-3, -3, 4, 4)
+target = NodePath("../DefenseLayer")
+preview = NodePath("../Preview")
+tile_map_data = PackedByteArray("AAD9//3/AAABAAAAAAD+//7/AAABAAAAAAD9//7/AAABAAAAAAD+//3/AAABAAAAAAD///3/AAABAAAAAAD8//7/AAABAAAAAAD///7/AAAAAAAAAAD+//z/AAAAAAAAAAD9//z/AAAAAAAAAAD8//3/AAAAAAAAAAD9////AAAAAAAAAAD+////AAAAAAAAAAA=")
+tile_set = ExtResource("1_fy28o")
+
+[node name="Preview" type="TileMapLayer" parent="."]
+material = SubResource("ShaderMaterial_8p1uy")
+tile_set = ExtResource("1_fy28o")

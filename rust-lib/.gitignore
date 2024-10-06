@@ -1,1 +1,9 @@
-/target
+/target/debug/.fingerprint
+/target/debug/build
+/target/debug/deps
+/target/debug/examples
+/target/debug/incremental
+/target/debug/.cargo-lock
+/target/debug/~rust_lib.dll
+/target/.rustc_info.json
+/target/CACHEDIR.TAG
