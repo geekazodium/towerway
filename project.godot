@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="Towerway"
-run/main_scene="res://test.tscn"
+run/main_scene="res://level_1.tscn"
 config/features=PackedStringArray("4.3", "C#", "GL Compatibility")
 config/icon="res://tilemap/icon.svg"
+
+[display]
+
+window/size/viewport_height=1080
+window/size/mode=3
 
 [dotnet]
 
