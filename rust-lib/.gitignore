@@ -5,5 +5,6 @@
 /target/debug/incremental
 /target/debug/.cargo-lock
 /target/debug/~rust_lib.dll
+/target/debug/rust_lib.d
 /target/.rustc_info.json
 /target/CACHEDIR.TAG

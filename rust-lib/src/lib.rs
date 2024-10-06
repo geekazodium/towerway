@@ -514,6 +514,17 @@ impl CellPattern{
 
 #[derive(GodotClass)]
 #[class(base = Node2D,init)]
-struct TickingGroup{
+struct PauseHelper{
     base: Base<Node2D>
+}
+
+#[godot_api]
+impl PauseHelper{
+    #[func]
+    pub fn set_ticking(&mut self, enable: bool){
+        let mut tree = self.base().get_tree().unwrap();
+        if tree.is_paused() != enable{
+            tree.set_pause(enable);
+        }
+    }
 }

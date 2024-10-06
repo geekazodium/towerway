@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=4 uid="uid://cntownvnqqh3"]
+[gd_scene load_steps=9 format=4 uid="uid://cntownvnqqh3"]
 
 [ext_resource type="TileSet" uid="uid://c5u80tio66lj4" path="res://tilemap/test.tres" id="1_fy28o"]
 [ext_resource type="PackedScene" uid="uid://41wb4hgqmteh" path="res://projectiles/hellfire.tscn" id="2_12oc1"]
 [ext_resource type="PackedScene" uid="uid://ddu6j7d1e1je2" path="res://projectiles/weak.tscn" id="2_rj33p"]
 [ext_resource type="PackedScene" uid="uid://croilwjccd5pk" path="res://enemies/basic_test_enemy.tscn" id="3_34s3v"]
 [ext_resource type="Shader" path="res://tilemap/transparency.gdshader" id="5_bnujo"]
+[ext_resource type="Script" path="res://CellPatternCS.cs" id="5_n6ujv"]
 
 [sub_resource type="Curve2D" id="Curve2D_xsopq"]
 _data = {
@@ -39,6 +40,7 @@ curve = SubResource("Curve2D_xsopq")
 interval = 1.2
 timer = 100.0
 enemies = ExtResource("3_34s3v")
+enabled = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(416, 320)
@@ -49,7 +51,9 @@ target = NodePath("../DefenseLayer")
 preview = NodePath("../Preview")
 tile_map_data = PackedByteArray("AAD9//3/AAABAAAAAAD+//7/AAABAAAAAAD9//7/AAABAAAAAAD+//3/AAABAAAAAAD///3/AAABAAAAAAD8//7/AAABAAAAAAD///7/AAAAAAAAAAD+//z/AAAAAAAAAAD9//z/AAAAAAAAAAD8//3/AAAAAAAAAAD9////AAAAAAAAAAD+////AAAAAAAAAAA=")
 tile_set = ExtResource("1_fy28o")
+script = ExtResource("5_n6ujv")
 
 [node name="Preview" type="TileMapLayer" parent="."]
 material = SubResource("ShaderMaterial_8p1uy")
 tile_set = ExtResource("1_fy28o")
+script = ExtResource("5_n6ujv")
