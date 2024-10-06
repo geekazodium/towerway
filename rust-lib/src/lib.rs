@@ -1,6 +1,8 @@
 use core::f64;
 use core::panic;
 
+use enemy_spawner::EnemyPath;
+use enemy_spawner::EnemySpawner;
 use godot::builtin::Callable;
 use godot::builtin::GString;
 use godot::builtin::Rect2i;
@@ -13,7 +15,6 @@ use godot::classes::INode2D;
 use godot::classes::IPathFollow2D;
 use godot::classes::ISprite2D;
 use godot::classes::ITileMapLayer;
-use godot::classes::Input;
 use godot::classes::Node;
 use godot::classes::Node2D;
 use godot::classes::PackedScene;
@@ -21,7 +22,6 @@ use godot::classes::PathFollow2D;
 use godot::classes::Sprite2D;
 use godot::classes::TileData;
 use godot::classes::TileMapLayer;
-use godot::classes::Viewport;
 use godot::init::gdextension;
 use godot::init::ExtensionLibrary;
 use godot::obj::Base;
@@ -161,7 +161,7 @@ impl CellRules{
     fn to_cost(&self)->i32{
         match self{
             Self::Empty => 1,
-            Self::BasicFilled => 2,
+            Self::BasicFilled => 6,
             Self::PermaCell => panic!("user probably shouldn't be able to place these, too op"),
             Self::ForceEmpty => 0
         }
@@ -208,6 +208,7 @@ impl CellRules{
             Self::PermaCell=>Self::PermaCell
         }
     }
+    #[allow(unused)]
     fn user_replaceable(&self)-> bool{
         match self {
             Self::Empty=>true,
@@ -369,11 +370,13 @@ struct BasicEnemy{
 #[godot_api]
 impl IPathFollow2D for BasicEnemy{
     fn physics_process(&mut self, delta: f64){
-        let mut p = self.base_mut().get_progress();
-        let last_progress = p;
+        let mut p = self.base().get_progress();
+        let last_progress = self.base().get_progress_ratio();
         p += self.speed * delta as f32;
         self.base_mut().set_progress(p);
-        if self.base().get_progress() < last_progress{
+        if self.base().get_progress_ratio() < last_progress{
+            let spawner:Gd<EnemyPath> = self.base().get_parent().unwrap().cast();
+            spawner.bind().hit_player();
             self.base_mut().queue_free();
         }
     }
@@ -397,134 +400,7 @@ impl INode2D for DeleteAfter{
     }
 }
 
-#[derive(GodotClass)]
-#[class(base = Node, init)]
-struct EnemySpawner{
-    base: Base<Node>,
-    #[export]
-    interval: f64,
-    #[export]
-    timer: f64,
-    #[export]
-    enemies: Option<Gd<PackedScene>>,
-    #[export]
-    enabled: bool
-}
-
-#[godot_api]
-impl INode for EnemySpawner{
-    fn physics_process(&mut self, delta: f64){
-        if !self.get_enabled(){
-            return;
-        }
-        self.timer += delta;
-        if self.timer > self.interval{
-            self.timer = 0.;
-            let instance = self.enemies.clone().expect("enemy scene not set").instantiate().unwrap();
-            let mut parent = self.base().get_parent().unwrap();
-            parent.add_child(instance);
-        }
-    }
-}
-
-#[derive(GodotClass)]
-#[class(base = TileMapLayer, init)]
-struct CellPattern{
-    base: Base<TileMapLayer>,
-    #[export]
-    bounds: Rect2i,
-    last_mouse_pos: Vector2i,
-    #[export]
-    target: Option<Gd<TileMapLayer>>,
-    #[export]
-    preview: Option<Gd<TileMapLayer>>
-}
-
-#[godot_api]
-impl ITileMapLayer for CellPattern{
-    fn process(&mut self, _delta: f64){
-        let mouse_tile = Self::get_mouse_tile(self.base().get_viewport().expect("no valid viewport"));
-        if Input::singleton().is_action_just_pressed("place_cell".into()) || 
-            (Input::singleton().is_action_pressed("place_cell".into()) && self.last_mouse_pos != mouse_tile){
-            
-            let rules = CellRules::from_tile(self.base().get_cell_tile_data(mouse_tile));
-            if rules.user_replaceable(){
-                self.base_mut().set_cell_ex(mouse_tile).source_id(0).atlas_coords(CellRules::BasicFilled.to_atlas_coords()).done();
-            }
-            self.last_mouse_pos = mouse_tile;
-        }
-
-        if Input::singleton().is_action_just_pressed("place_pattern".into()){
-            self.place(self.target.clone().unwrap(), mouse_tile, true);
-        }
-        self.update_hover(self.preview.clone().unwrap(), mouse_tile);
-    }
-}
-
-
-#[godot_api]
-impl CellPattern{
-    fn get_mouse_tile(viewport: Gd<Viewport>)-> Vector2i{
-        let pos = viewport.get_camera_2d().expect("no valid camera2d").get_global_mouse_position();
-        (pos / TILE_SIZE).floor().cast_int()
-    }
-    #[func]
-    pub fn get_cost(&self) -> i32{
-        let mut cost = 0;
-        let cells = self.base().get_used_cells();
-        for cell_pos in cells.iter_shared(){
-            let tile = self.base().get_cell_tile_data(cell_pos);
-            let cell_rules = CellRules::from_tile(tile);
-            cost += cell_rules.to_cost();
-        }
-        cost
-    }
-    #[func]
-    pub fn get_center(&self)-> Vector2{
-        let cells = self.base().get_used_cells();
-        let mut average = Vector2::new(0.,0.);
-        let mut count = 0;
-        for cell_pos in cells.iter_shared(){
-            count += 1;
-            average = average.lerp(cell_pos.cast_float(), 1./count as f32);
-        }
-        average
-    }
-    #[func]
-    pub fn place(&self, mut target: Gd<TileMapLayer>, center: Vector2i, check_valid: bool){
-        let cells_center = self.get_center();
-        let cells = self.base().get_used_cells();
-        for cell_pos in cells.iter_shared(){
-            let pos = cell_pos + center - cells_center.cast_int();
-            let cell_data = self.base().get_cell_tile_data(cell_pos);
-            let cell_rules = CellRules::from_tile(cell_data);
-
-            let target_tile = CellRules::from_tile(target.get_cell_tile_data(pos));
-            if target_tile.can_set() || !check_valid{
-                target.set_cell_ex(pos).source_id(0).atlas_coords(cell_rules.to_atlas_coords()).done();
-            }
-        }
-    }
-    #[func]
-    pub fn update_hover(&self, mut preview: Gd<TileMapLayer>,center: Vector2i){
-        preview.clear();
-        self.place(preview, center, false);
-    }
-}
-
-#[derive(GodotClass)]
-#[class(base = Node2D,init)]
-struct PauseHelper{
-    base: Base<Node2D>
-}
-
-#[godot_api]
-impl PauseHelper{
-    #[func]
-    pub fn set_ticking(&mut self, enable: bool){
-        let mut tree = self.base().get_tree().unwrap();
-        if tree.is_paused() != enable{
-            tree.set_pause(enable);
-        }
-    }
-}
+pub mod enemy_spawner;
+pub mod cell_patterns;
+pub mod player_health;
+pub mod ingame_state_tracker;
