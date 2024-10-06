@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://xt66sm1ipkd5"]
+[gd_scene load_steps=20 format=4 uid="uid://xt66sm1ipkd5"]
 
 [ext_resource type="TileSet" uid="uid://c5u80tio66lj4" path="res://tilemap/test.tres" id="1_mfmjw"]
 [ext_resource type="PackedScene" uid="uid://ddu6j7d1e1je2" path="res://projectiles/weak.tscn" id="2_8pys4"]
@@ -6,12 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://croilwjccd5pk" path="res://enemies/basic_test_enemy.tscn" id="4_lby1b"]
 [ext_resource type="Shader" path="res://tilemap/transparency.gdshader" id="5_g11rg"]
 [ext_resource type="PackedScene" uid="uid://b6mkqdrg3vfoc" path="res://ui/game_over_ui.tscn" id="6_uu67t"]
-
-[sub_resource type="Curve2D" id="Curve2D_xsopq"]
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0, 576, 0, 0, 0, 0, 767, 576, 0, 0, 0, 0, 767, 480, 0, 0, 0, 0, 255, 480, 0, 0, 0, 0, 255, 160, 0, 0, 0, 0, 63, 160, 0, 0, 0, 0, 63, 64, 0, 0, 0, 0, 831, 64)
-}
-point_count = 8
+[ext_resource type="Curve2D" uid="uid://c6vq27ol1af2u" path="res://curve1.tres" id="7_pbo5x"]
+[ext_resource type="Texture2D" uid="uid://civ0xe71255u8" path="res://ui/background.tres" id="7_rysj2"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8p1uy"]
 shader = ExtResource("5_g11rg")
@@ -31,6 +27,24 @@ colors = PackedColorArray(0, 0, 0, 1, 0.0626311, 0.0626311, 0.0626311, 1, 0.8028
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_livaj"]
 gradient = SubResource("Gradient_y701c")
 
+[sub_resource type="InputEventAction" id="InputEventAction_kebdv"]
+action = &"draw_done"
+
+[sub_resource type="Shortcut" id="Shortcut_4qfbp"]
+events = [SubResource("InputEventAction_kebdv")]
+
+[sub_resource type="Gradient" id="Gradient_x8ch5"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_rehmh"]
+gradient = SubResource("Gradient_x8ch5")
+
+[sub_resource type="Gradient" id="Gradient_e4o60"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(1, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_p57ye"]
+gradient = SubResource("Gradient_e4o60")
+
 [node name="Node2D" type="Node2D"]
 
 [node name="DefenseLayer" type="DefenseLayer" parent="."]
@@ -47,16 +61,6 @@ event_name = "overpopulate_death"
 projectile = ExtResource("3_cylxw")
 event_name = "extra_overpopulate_death"
 
-[node name="Path2D" type="Path2D" parent="."]
-position = Vector2(1, 0)
-curve = SubResource("Curve2D_xsopq")
-
-[node name="EnemySpawner" type="EnemySpawner" parent="Path2D"]
-interval = 1.2
-timer = 100.0
-enemies = ExtResource("4_lby1b")
-enabled = true
-
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(416, 320)
 
@@ -65,10 +69,12 @@ z_index = 10
 material = SubResource("ShaderMaterial_8p1uy")
 tile_set = ExtResource("1_mfmjw")
 
-[node name="PlayerHealth" type="PlayerHealth" parent="."]
-max_health = 30
-health = 30
+[node name="PlayerHealth" type="PlayerHealth" parent="." node_paths=PackedStringArray("game_state", "health_bar")]
+max_health = 10
+health = 10
 game_over_scene = ExtResource("6_uu67t")
+game_state = NodePath("../IngameStateTracker")
+health_bar = NodePath("../CanvasLayer/TextureProgressBar2")
 
 [node name="PlayerEnergy" type="PlayerEnergy" parent="." node_paths=PackedStringArray("display")]
 max_energy = 500
@@ -76,41 +82,56 @@ energy_interval = 0.5
 energy_per_interval = 10
 display = NodePath("../CanvasLayer/TextureProgressBar")
 
-[node name="CellPatternToobox" type="Node" parent="."]
+[node name="CellPatternToolbox" type="CellPatternToolbox" parent="." node_paths=PackedStringArray("patterns", "gamestate", "transparency_pane")]
+patterns = [NodePath("CellPattern"), NodePath("CellPattern2"), NodePath("CellPattern3"), NodePath("CellPattern4")]
+brush_tiles = Array[int]([0, 1, 2])
+gamestate = NodePath("../IngameStateTracker")
+transparency_pane = NodePath("../TextureRect")
 
-[node name="CellPattern" type="CellPattern" parent="CellPatternToobox" node_paths=PackedStringArray("target", "preview", "energy_source", "gamestate")]
+[node name="CellPattern" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source")]
 bounds = Rect2i(-3, -3, 4, 4)
 target = NodePath("../../DefenseLayer")
 preview = NodePath("../../Preview")
 energy_source = NodePath("../../PlayerEnergy")
-gamestate = NodePath("../../IngameStateTracker")
+z_index = 1
 tile_map_data = PackedByteArray("AAAFAAUAAAABAAAAAAAGAAUAAAABAAAAAAAGAAQAAAABAAAAAAAGAAMAAAABAAAAAAAEAAQAAAABAAAAAAAFAAYAAAAAAAAAAAAGAAYAAAAAAAAAAAAHAAYAAAAAAAAAAAAHAAUAAAAAAAAAAAAHAAQAAAAAAAAAAAAHAAMAAAAAAAAAAAAGAAIAAAAAAAAAAAAHAAIAAAAAAAAAAAAFAAIAAAAAAAAAAAAFAAMAAAAAAAAAAAAFAAQAAAAAAAAAAAAEAAMAAAAAAAAAAAADAAMAAAAAAAAAAAADAAQAAAAAAAAAAAADAAUAAAAAAAAAAAAEAAUAAAAAAAAAAAAEAAYAAAAAAAAAAAA=")
 tile_set = ExtResource("1_mfmjw")
 
-[node name="CellPattern2" type="CellPattern" parent="CellPatternToobox" node_paths=PackedStringArray("target", "preview", "energy_source", "gamestate")]
+[node name="CellPattern2" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source")]
 bounds = Rect2i(-3, -3, 4, 4)
 target = NodePath("../../DefenseLayer")
 preview = NodePath("../../Preview")
 energy_source = NodePath("../../PlayerEnergy")
-gamestate = NodePath("../../IngameStateTracker")
+z_index = 1
 tile_map_data = PackedByteArray("AAAOAAUAAAABAAAAAAAPAAUAAAABAAAAAAAQAAUAAAABAAAAAAARAAUAAAABAAAAAAARAAQAAAABAAAAAAARAAMAAAABAAAAAAAQAAIAAAABAAAAAAANAAQAAAABAAAAAAANAAIAAAABAAAAAAAQAAQAAAAAAAAAAAAPAAQAAAAAAAAAAAAOAAQAAAAAAAAAAAAQAAMAAAAAAAAAAAAPAAMAAAAAAAAAAAAOAAMAAAAAAAAAAAANAAMAAAAAAAAAAAAMAAMAAAAAAAAAAAAMAAQAAAAAAAAAAAAMAAIAAAAAAAAAAAANAAEAAAAAAAAAAAAOAAEAAAAAAAAAAAAOAAIAAAAAAAAAAAAMAAEAAAAAAAAAAAAPAAEAAAAAAAAAAAAPAAIAAAAAAAAAAAAQAAEAAAAAAAAAAAARAAEAAAAAAAAAAAARAAIAAAAAAAAAAAASAAIAAAAAAAAAAAASAAMAAAAAAAAAAAASAAQAAAAAAAAAAAASAAUAAAAAAAAAAAASAAYAAAAAAAAAAAARAAYAAAAAAAAAAAAQAAYAAAAAAAAAAAAPAAYAAAAAAAAAAAAOAAYAAAAAAAAAAAANAAYAAAAAAAAAAAANAAUAAAAAAAAAAAAMAAUAAAAAAAAAAAA=")
 tile_set = ExtResource("1_mfmjw")
 
-[node name="CellPattern3" type="CellPattern" parent="CellPatternToobox" node_paths=PackedStringArray("target", "preview", "energy_source", "gamestate")]
+[node name="CellPattern3" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source")]
 bounds = Rect2i(-3, -3, 4, 4)
 target = NodePath("../../DefenseLayer")
 preview = NodePath("../../Preview")
 energy_source = NodePath("../../PlayerEnergy")
-gamestate = NodePath("../../IngameStateTracker")
+z_index = 1
 tile_set = ExtResource("1_mfmjw")
 
-[node name="CellPattern4" type="CellPattern" parent="CellPatternToobox" node_paths=PackedStringArray("target", "preview", "energy_source", "gamestate")]
+[node name="CellPattern4" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source")]
 bounds = Rect2i(-3, -3, 4, 4)
 target = NodePath("../../DefenseLayer")
 preview = NodePath("../../Preview")
 energy_source = NodePath("../../PlayerEnergy")
-gamestate = NodePath("../../IngameStateTracker")
+z_index = 1
 tile_set = ExtResource("1_mfmjw")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+z_as_relative = false
+offset_left = -3408.0
+offset_top = 713.0
+offset_right = -2356.0
+offset_bottom = 3521.0
+rotation = -1.57079
+scale = Vector2(0.707617, 2.71313)
+texture = ExtResource("7_rysj2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -125,4 +146,31 @@ nine_patch_stretch = true
 texture_under = SubResource("GradientTexture1D_1se6s")
 texture_progress = SubResource("GradientTexture1D_livaj")
 
-[node name="IngameStateTracker" type="IngameStateTracker" parent="."]
+[node name="Button" type="Button" parent="CanvasLayer"]
+offset_left = 1016.0
+offset_top = 600.0
+offset_right = 1144.0
+offset_bottom = 640.0
+shortcut = SubResource("Shortcut_4qfbp")
+
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="CanvasLayer"]
+offset_left = 8.0
+offset_top = 32.0
+offset_right = 320.0
+offset_bottom = 48.0
+nine_patch_stretch = true
+texture_under = SubResource("GradientTexture1D_rehmh")
+texture_progress = SubResource("GradientTexture1D_p57ye")
+
+[node name="IngameStateTracker" type="IngameStateTracker" parent="." node_paths=PackedStringArray("drawing_done_button")]
+drawing_done_button = NodePath("../CanvasLayer/Button")
+
+[node name="EnemyPath" type="EnemyPath" parent="." node_paths=PackedStringArray("player_health")]
+player_health = NodePath("../PlayerHealth")
+curve = ExtResource("7_pbo5x")
+
+[node name="EnemySpawner" type="EnemySpawner" parent="EnemyPath"]
+interval = 1.2
+timer = 100.0
+enemies = ExtResource("4_lby1b")
+enabled = true

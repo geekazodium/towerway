@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use godot::{classes::{INode, Node2D}, global::godot_warn, obj::{Base, WithBaseField}, prelude::{godot_api, GodotClass}};
+use godot::{builtin::Callable, classes::{BaseButton, INode}, global::godot_warn, obj::{Base, Gd, WithBaseField}, prelude::{godot_api, GodotClass}};
 use godot::classes::Node;
 
 
@@ -9,7 +9,9 @@ use godot::classes::Node;
 #[class(base = Node)]
 pub struct IngameStateTracker{
     base: Base<Node>,
-    state: GameplayState
+    state: GameplayState,
+    #[export]
+    drawing_done_button: Option<Gd<BaseButton>>
 }
 
 #[godot_api]
@@ -17,11 +19,13 @@ impl INode for IngameStateTracker {
     fn init(base: Base<Node>)-> Self{
         Self{
             base,
-            state: GameplayState::DEFENDING
+            state: GameplayState::DEFENDING,
+            drawing_done_button: None
         }
     }
     fn ready(&mut self){
         self.end_wave();
+        self.get_drawing_done_button().unwrap().connect("button_up".into(), Callable::from_object_method(&self.base_mut(), "end_drawing"));
     }
 }
 
@@ -41,6 +45,7 @@ impl IngameStateTracker{
     pub fn end_wave(&mut self){
         if self.get_state() == GameplayState::DEFENDING{
             self.state = GameplayState::DRAWING;
+            self.get_drawing_done_button().unwrap().set_visible(true);
             self.base_mut().emit_signal(START_DRAW_SIGNAL.into(), &[]);
         }else{
             self.warn_state_change_invalid(GameplayState::DRAWING);
@@ -50,6 +55,7 @@ impl IngameStateTracker{
     pub fn end_drawing(&mut self){
         if self.get_state() == GameplayState::DRAWING{
             self.state = GameplayState::DEFENDING;
+            self.get_drawing_done_button().unwrap().set_visible(false);
             self.base_mut().emit_signal(START_WAVE_SIGNAL.into(), &[]);
         }else{
             self.warn_state_change_invalid(GameplayState::DEFENDING);
@@ -59,6 +65,7 @@ impl IngameStateTracker{
     pub fn die(&mut self){
         if self.get_state() == GameplayState::DEFENDING || self.get_state() == GameplayState::DRAWING{
             self.state = GameplayState::DEAD;
+            self.get_drawing_done_button().unwrap().set_visible(false);
             self.base_mut().emit_signal(DEATH_SIGNAL.into(), &[]);
         }else {
             self.warn_state_change_invalid(GameplayState::DEAD);

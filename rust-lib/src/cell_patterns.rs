@@ -1,11 +1,11 @@
 use core::f64;
-use std::borrow::Borrow;
 use std::ops::Add;
 
 use godot::builtin::Array;
 use godot::builtin::Rect2i;
 use godot::builtin::Vector2;
 use godot::builtin::Vector2i;
+use godot::classes::Control;
 use godot::classes::INode;
 use godot::classes::ITileMapLayer;
 use godot::classes::Input;
@@ -88,7 +88,11 @@ struct CellPatternToolbox {
     selected_pattern: u8,
     #[export]
     brush_tiles: Array<u16>,
-    selected_tile: u8
+    selected_tile: u8,
+    #[export]
+    gamestate: Option<Gd<IngameStateTracker>>,
+    #[export]
+    transparency_pane: Option<Gd<Control>>
 }
 
 #[godot_api]
@@ -105,6 +109,11 @@ impl INode for CellPatternToolbox {
         } else if Input::singleton().is_action_just_pressed("prev_pattern".into()) {
             self.switch_prev();
         }
+        if Input::singleton().is_action_just_pressed("switch_draw_tile".into()).into(){
+            self.switch_brush();
+        }
+        let is_drawing = self.get_game_state().bind().get_state() == GameplayState::DRAWING;
+        self.get_transparency_pane().unwrap().set_visible(is_drawing);
     }
 }
 
@@ -147,7 +156,11 @@ impl CellPatternToolbox {
     }
 
     pub fn get_selected_brush_tile(&self) -> u16{
-        self.get_brush_tiles().get(self.selected_tile as usize).unwrap()
+        self.get_brush_tiles().get(self.selected_tile as usize).expect("invalid tile input")
+    }
+
+    pub fn get_game_state(&self)-> Gd<IngameStateTracker>{
+        self.gamestate.clone().unwrap()
     }
 }
 
@@ -163,8 +176,6 @@ struct CellPattern {
     preview: Option<Gd<TileMapLayer>>,
     #[export]
     energy_source: Option<Gd<PlayerEnergy>>,
-    #[export]
-    gamestate: Option<Gd<IngameStateTracker>>,
     last_mouse_pos: Vector2i,
     enabled: bool
 }
@@ -172,7 +183,8 @@ struct CellPattern {
 #[godot_api]
 impl ITileMapLayer for CellPattern {
     fn process(&mut self, _delta: f64) {
-        let state = self.get_gamestate().unwrap().bind().get_state();
+        let parent: Gd<CellPatternToolbox> = self.base().get_parent().expect("no parent???").try_cast().expect("object is not a child of CellPatternToolbox"); 
+        let state = parent.bind().get_game_state().bind().get_state();
         if state == GameplayState::DRAWING{
             self.drawing_process();
         }else if state == GameplayState::DEFENDING{
@@ -188,12 +200,13 @@ impl ITileMapLayer for CellPattern {
 impl CellPattern{
     //process method when player is defending
     fn defending_process(&mut self){
+        
+        self.base_mut().set_visible(false);
         if !self.enabled {
             return;
         }
 
         let cost = self.get_cost();
-        godot_print!("{}",cost);
         if !self.get_energy_source().unwrap().bind().can_use(cost){
             return;
         }
@@ -212,8 +225,10 @@ impl CellPattern{
     //process method when player is drawing new towers
     fn drawing_process(&mut self){
         if !self.enabled {
+            self.base_mut().set_visible(false);
             return;
         }
+        self.base_mut().set_visible(true);
         
         let mouse_tile =
             Self::get_mouse_tile(self.base().get_viewport().expect("no valid viewport"));
@@ -222,13 +237,17 @@ impl CellPattern{
             || (Input::singleton().is_action_pressed("place_cell".into())
                 && self.last_mouse_pos != mouse_tile)
         {
-            let parent: Gd<CellPatternToolbox> = self.base().get_parent().unwrap().try_cast().expect("object is not a child of CellPatternToolbox"); 
+            let parent: Gd<CellPatternToolbox> = self.base().get_parent().expect("no parent???").try_cast().expect("object is not a child of CellPatternToolbox"); 
             let r = CellRules::from_id(parent.bind().get_selected_brush_tile());
-            self.base_mut()
-                .set_cell_ex(mouse_tile)
-                .source_id(0)
-                .atlas_coords(r.to_atlas_coords())
-                .done();
+            if r == CellRules::ForceEmpty{
+                self.base_mut().set_cell(mouse_tile);
+            }else{
+                self.base_mut()
+                    .set_cell_ex(mouse_tile)
+                    .source_id(0)
+                    .atlas_coords(r.to_atlas_coords())
+                    .done();
+            }
             self.last_mouse_pos = mouse_tile;
         }
     }
@@ -241,7 +260,6 @@ impl CellPattern {
             self.enabled = enabled;
             self.get_preview().unwrap().clear();
         }
-        self.base_mut().set_visible(enabled);
     }
     fn get_mouse_tile(viewport: Gd<Viewport>) -> Vector2i {
         let pos = viewport
