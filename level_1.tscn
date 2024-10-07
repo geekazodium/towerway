@@ -258,10 +258,17 @@ shortcut = SubResource("Shortcut_tf5wx")
 text = "Switch Brush"
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
-offset_left = 1784.0
-offset_top = 784.0
-offset_right = 1912.0
-offset_bottom = 848.0
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -136.0
+offset_top = -296.0
+offset_right = -8.0
+offset_bottom = -232.0
+grow_horizontal = 0
+grow_vertical = 0
 texture = ExtResource("7_dgekf")
 
 [node name="SelectedHotbar" type="SelectedHotbar" parent="CanvasLayer/TextureRect"]
@@ -275,10 +282,17 @@ offset_bottom = 96.0
 texture = ExtResource("8_7wesh")
 
 [node name="SelectedBlueprint" type="TextureRect" parent="CanvasLayer"]
-offset_left = 1696.0
-offset_top = 896.0
-offset_right = 1824.0
-offset_bottom = 960.0
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = -504.0
+offset_right = 120.0
+offset_bottom = -440.0
+grow_horizontal = 0
+grow_vertical = 0
 rotation = 1.57079
 texture = ExtResource("7_dgekf")
 
