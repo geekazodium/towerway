@@ -6,10 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://croilwjccd5pk" path="res://enemies/basic_test_enemy.tscn" id="4_lby1b"]
 [ext_resource type="Shader" path="res://tilemap/transparency.gdshader" id="5_g11rg"]
 [ext_resource type="PackedScene" uid="uid://b6mkqdrg3vfoc" path="res://ui/game_over_ui.tscn" id="6_uu67t"]
+[ext_resource type="Texture2D" uid="uid://byumjt14hpt0r" path="res://ui/images/healthBar_Base.png" id="7_21mih"]
 [ext_resource type="Texture2D" uid="uid://b6b6jme1utji4" path="res://tilemap/drawable_cells.tres" id="7_dgekf"]
 [ext_resource type="Curve2D" uid="uid://c6vq27ol1af2u" path="res://curve1.tres" id="7_pbo5x"]
 [ext_resource type="Texture2D" uid="uid://civ0xe71255u8" path="res://ui/background.tres" id="7_rysj2"]
 [ext_resource type="Texture2D" uid="uid://dwt77pq14a5c2" path="res://tilemap/selected.png" id="8_7wesh"]
+[ext_resource type="Texture2D" uid="uid://cib10y3xblr7" path="res://ui/images/healthBar_fill.png" id="8_ene77"]
+[ext_resource type="PackedScene" uid="uid://oa7qm5cipp65" path="res://ui/level_progress.tscn" id="11_703uw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8p1uy"]
 shader = ExtResource("5_g11rg")
@@ -35,18 +38,6 @@ action = &"draw_done"
 [sub_resource type="Shortcut" id="Shortcut_4qfbp"]
 events = [SubResource("InputEventAction_kebdv")]
 
-[sub_resource type="Gradient" id="Gradient_x8ch5"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_rehmh"]
-gradient = SubResource("Gradient_x8ch5")
-
-[sub_resource type="Gradient" id="Gradient_e4o60"]
-offsets = PackedFloat32Array(0)
-colors = PackedColorArray(1, 0, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_p57ye"]
-gradient = SubResource("Gradient_e4o60")
-
 [sub_resource type="InputEventAction" id="InputEventAction_andtp"]
 action = &"next_pattern"
 
@@ -64,6 +55,9 @@ action = &"switch_draw_tile"
 
 [sub_resource type="Shortcut" id="Shortcut_tf5wx"]
 events = [SubResource("InputEventAction_lw0b7")]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ts3fe"]
+size = Vector2(10000, 10000)
 
 [node name="Node2D" type="Node2D"]
 
@@ -178,12 +172,11 @@ tile_set = ExtResource("1_mfmjw")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="ResourceProgressBar" type="TextureProgressBar" parent="CanvasLayer"]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 320.0
-offset_bottom = 32.0
+offset_left = 88.0
+offset_top = 80.0
+offset_right = 400.0
+offset_bottom = 104.0
 max_value = 500.0
-value = 15.0
 nine_patch_stretch = true
 texture_under = SubResource("GradientTexture1D_1se6s")
 texture_progress = SubResource("GradientTexture1D_livaj")
@@ -204,13 +197,19 @@ shortcut = SubResource("Shortcut_4qfbp")
 text = "Finish Drawing"
 
 [node name="HealthProgressBar" type="TextureProgressBar" parent="CanvasLayer"]
-offset_left = 8.0
-offset_top = 32.0
-offset_right = 320.0
-offset_bottom = 48.0
+offset_top = -40.0
+offset_right = 1320.0
+offset_bottom = 312.0
+scale = Vector2(0.4, 0.4)
+min_value = -2.0
+max_value = 10.0
+value = 10.0
 nine_patch_stretch = true
-texture_under = SubResource("GradientTexture1D_rehmh")
-texture_progress = SubResource("GradientTexture1D_p57ye")
+stretch_margin_left = 250
+stretch_margin_top = 350
+stretch_margin_right = 565
+texture_under = ExtResource("7_21mih")
+texture_progress = ExtResource("8_ene77")
 
 [node name="NextPatternButton" type="Button" parent="CanvasLayer"]
 anchors_preset = 3
@@ -306,15 +305,61 @@ offset_right = 32.0
 offset_bottom = 96.0
 texture = ExtResource("8_7wesh")
 
+[node name="TextureProgressBar" parent="CanvasLayer" instance=ExtResource("11_703uw")]
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -9.0
+offset_top = -114.0
+offset_right = 991.0
+offset_bottom = 386.0
+max_value = 4.0
+step = 1.0
+value = 0.0
+
 [node name="EnemyPath" type="EnemyPath" parent="." node_paths=PackedStringArray("player_health")]
 player_health = NodePath("../PlayerHealth")
 curve = ExtResource("7_pbo5x")
 
-[node name="EnemySpawner" type="EnemySpawner" parent="EnemyPath"]
+[node name="EnemySpawner" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("game_state")]
 interval = 1.2
 timer = 100.0
 enemies = ExtResource("4_lby1b")
-enabled = true
+spawns_left = 10
+game_state = NodePath("../../IngameStateTracker")
+
+[node name="EnemySpawner2" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("wait_for", "game_state")]
+interval = 0.8
+timer = 100.0
+enemies = ExtResource("4_lby1b")
+wait_for = NodePath("../EnemySpawner")
+spawns_left = 20
+game_state = NodePath("../../IngameStateTracker")
+
+[node name="EnemySpawner3" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("wait_for", "game_state")]
+interval = 0.35
+timer = 100.0
+enemies = ExtResource("4_lby1b")
+wait_for = NodePath("../EnemySpawner2")
+spawns_left = 50
+game_state = NodePath("../../IngameStateTracker")
+
+[node name="EnemySpawner4" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("wait_for", "game_state")]
+interval = 0.2
+timer = 100.0
+enemies = ExtResource("4_lby1b")
+wait_for = NodePath("../EnemySpawner3")
+spawns_left = 75
+game_state = NodePath("../../IngameStateTracker")
 
 [node name="IngameStateTracker" type="IngameStateTracker" parent="." node_paths=PackedStringArray("drawing_done_button")]
 drawing_done_button = NodePath("../CanvasLayer/Button")
+
+[node name="EnemySpawnerProgressTracker" type="EnemySpawnerProgressTracker" parent="." node_paths=PackedStringArray("progress_bar", "spawners", "gamestate")]
+progress_bar = NodePath("../CanvasLayer/TextureProgressBar")
+spawners = [NodePath("../EnemyPath/EnemySpawner"), NodePath("../EnemyPath/EnemySpawner2"), NodePath("../EnemyPath/EnemySpawner3"), NodePath("../EnemyPath/EnemySpawner4")]
+gamestate = NodePath("../IngameStateTracker")
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemySpawnerProgressTracker"]
+shape = SubResource("RectangleShape2D_ts3fe")
