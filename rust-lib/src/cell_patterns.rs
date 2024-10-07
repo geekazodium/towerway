@@ -2,28 +2,31 @@ use core::f64;
 use std::ops::Add;
 
 use godot::builtin::Array;
+use godot::builtin::Callable;
 use godot::builtin::Rect2i;
 use godot::builtin::Vector2;
 use godot::builtin::Vector2i;
+use godot::classes::BaseButton;
 use godot::classes::Control;
 use godot::classes::INode;
 use godot::classes::ITileMapLayer;
 use godot::classes::Input;
+use godot::classes::InputEvent;
 use godot::classes::Node;
 use godot::classes::TextureProgressBar;
 use godot::classes::TileMapLayer;
 use godot::classes::Viewport;
-use godot::global::godot_print;
 use godot::obj::Base;
 use godot::obj::Gd;
 use godot::obj::WithBaseField;
 use godot::prelude::godot_api;
 use godot::prelude::GodotClass;
 
+use crate::defense_layer::TILE_SIZE;
 use crate::ingame_state_tracker::GameplayState;
 use crate::ingame_state_tracker::IngameStateTracker;
+use crate::selected_hotbar::SelectedHotbar;
 use crate::CellRules;
-use crate::TILE_SIZE;
 
 #[derive(GodotClass)]
 #[class(base = Node,init)]
@@ -39,12 +42,17 @@ struct PlayerEnergy {
     #[export]
     energy_per_interval: i32,
     #[export]
-    display: Option<Gd<TextureProgressBar>>
+    display: Option<Gd<TextureProgressBar>>,
+    #[export]
+    game_state: Option<Gd<IngameStateTracker>>
 }
 
 #[godot_api]
 impl INode for PlayerEnergy{
     fn physics_process(&mut self, delta: f64){
+        if self.get_game_state().expect("no game state ref was set").bind().get_state() != GameplayState::DEFENDING{
+            return;
+        }
         self.energy_timer += delta;
         if self.energy_timer >= self.energy_interval{
             if self.energy<self.max_energy{
@@ -92,7 +100,18 @@ struct CellPatternToolbox {
     #[export]
     gamestate: Option<Gd<IngameStateTracker>>,
     #[export]
-    transparency_pane: Option<Gd<Control>>
+    transparency_pane: Option<Gd<Control>>,
+
+    #[export]
+    next_pattern_button: Option<Gd<BaseButton>>,
+    #[export]
+    prev_pattern_button: Option<Gd<BaseButton>>,
+    #[export]
+    switch_brush_button: Option<Gd<BaseButton>>,
+    #[export]
+    tile_picker: Option<Gd<SelectedHotbar>>,
+    #[export]
+    blueprint_picker: Option<Gd<SelectedHotbar>>
 }
 
 #[godot_api]
@@ -101,19 +120,18 @@ impl INode for CellPatternToolbox {
         for _ in 0..self.patterns.len(){
             self.switch_next();
         }
+        self.update_tile_picker_display();
+        self.update_blueprint_picker_display();
+        self.get_next_pattern_button().unwrap().connect("pressed".into(), Callable::from_object_method(&self.to_gd(), "switch_next"));
+        self.get_prev_pattern_button().unwrap().connect("pressed".into(), Callable::from_object_method(&self.to_gd(), "switch_prev"));
+        self.get_switch_brush_button().unwrap().connect("pressed".into(),Callable::from_object_method(&self.to_gd(), "switch_brush"));
+
     }
     fn process(&mut self, _delta: f64) {
-        //detecting if actions were pressed and switch to the next/prev pattern
-        if Input::singleton().is_action_just_pressed("next_pattern".into()) {
-            self.switch_next();
-        } else if Input::singleton().is_action_just_pressed("prev_pattern".into()) {
-            self.switch_prev();
-        }
-        if Input::singleton().is_action_just_pressed("switch_draw_tile".into()).into(){
-            self.switch_brush();
-        }
         let is_drawing = self.get_game_state().bind().get_state() == GameplayState::DRAWING;
         self.get_transparency_pane().unwrap().set_visible(is_drawing);
+        self.get_tile_picker().unwrap().get_parent().unwrap().cast::<Control>().set_visible(is_drawing);
+        self.get_switch_brush_button().unwrap().set_visible(is_drawing);
     }
 }
 
@@ -135,6 +153,7 @@ impl CellPatternToolbox {
             .unwrap()
             .bind_mut()
             .set_enabled(true);
+        self.update_blueprint_picker_display();
     }
 
     #[func]
@@ -153,6 +172,14 @@ impl CellPatternToolbox {
     pub fn switch_brush(&mut self){
         self.selected_tile += 1;
         self.selected_tile = self.selected_tile.rem_euclid(self.brush_tiles.len() as u8);
+        self.update_tile_picker_display();
+    }
+
+    fn update_tile_picker_display(&self){
+        self.get_tile_picker().unwrap().bind_mut().set_selected(self.selected_tile as u32);
+    }
+    fn update_blueprint_picker_display(&self){
+        self.get_blueprint_picker().unwrap().bind_mut().set_selected(self.selected_pattern as u32);
     }
 
     pub fn get_selected_brush_tile(&self) -> u16{
@@ -195,9 +222,40 @@ impl ITileMapLayer for CellPattern {
         let enabled = self.enabled;
         self.base_mut().set_visible(enabled);
     }
+    fn unhandled_input(&mut self, event: Gd<InputEvent>){
+        if !self.enabled{
+            return;
+        }
+        let parent: Gd<CellPatternToolbox> = self.base().get_parent().expect("no parent???").try_cast().expect("object is not a child of CellPatternToolbox"); 
+        let state = parent.bind().get_game_state().bind().get_state();
+        if state == GameplayState::DRAWING{
+            let mouse_tile =
+                Self::get_mouse_tile(self.base().get_viewport().expect("no valid viewport"));
+    
+            let valid = event.is_action_pressed("place_cell".into()) || (Input::singleton().is_action_pressed("place_cell".into()) && mouse_tile != self.last_mouse_pos);
+            if valid{
+                self.draw_cell(mouse_tile);
+                self.last_mouse_pos = mouse_tile;
+            }
+        }
+    }
 }
 
 impl CellPattern{
+    fn draw_cell(&mut self, tile: Vector2i){
+        let parent: Gd<CellPatternToolbox> = self.base().get_parent().expect("no parent???").try_cast().expect("object is not a child of CellPatternToolbox"); 
+        let r = CellRules::from_id(parent.bind().get_selected_brush_tile());
+        if r == CellRules::ForceEmpty{
+            self.base_mut().set_cell(tile);
+        }else{
+            self.base_mut()
+                .set_cell_ex(tile)
+                .source_id(0)
+                .atlas_coords(r.to_atlas_coords())
+                .done();
+        }
+    }
+
     //process method when player is defending
     fn defending_process(&mut self){
         
@@ -229,27 +287,6 @@ impl CellPattern{
             return;
         }
         self.base_mut().set_visible(true);
-        
-        let mouse_tile =
-            Self::get_mouse_tile(self.base().get_viewport().expect("no valid viewport"));
-
-        if Input::singleton().is_action_just_pressed("place_cell".into())
-            || (Input::singleton().is_action_pressed("place_cell".into())
-                && self.last_mouse_pos != mouse_tile)
-        {
-            let parent: Gd<CellPatternToolbox> = self.base().get_parent().expect("no parent???").try_cast().expect("object is not a child of CellPatternToolbox"); 
-            let r = CellRules::from_id(parent.bind().get_selected_brush_tile());
-            if r == CellRules::ForceEmpty{
-                self.base_mut().set_cell(mouse_tile);
-            }else{
-                self.base_mut()
-                    .set_cell_ex(mouse_tile)
-                    .source_id(0)
-                    .atlas_coords(r.to_atlas_coords())
-                    .done();
-            }
-            self.last_mouse_pos = mouse_tile;
-        }
     }
 }
 
