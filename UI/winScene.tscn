@@ -1,0 +1,69 @@
+[gd_scene load_steps=9 format=3 uid="uid://cot0i4igxcis7"]
+
+[ext_resource type="Texture2D" uid="uid://bn4khbbjqsv87" path="res://sprites/UI/Win.png" id="1_ab055"]
+[ext_resource type="Texture2D" uid="uid://b48k62tdnhe3o" path="res://sprites/UI/Pausing_ReturnToMenu.png" id="3_qocni"]
+[ext_resource type="Texture2D" uid="uid://b53vs1shd4tx5" path="res://sprites/UI/Win_QuitGame.png" id="4_bujfg"]
+[ext_resource type="Script" path="res://scripts/UI/ReturnToMenuButton.cs" id="4_p1784"]
+[ext_resource type="Script" path="res://scripts/UI/ExitButton.cs" id="6_7w2gc"]
+[ext_resource type="Texture2D" uid="uid://ckbmbffslt3wa" path="res://sprites/UI/Win_PlayAgain.png" id="6_613xp"]
+[ext_resource type="Script" path="res://scripts/UI/PlayAgainButton.cs" id="7_8v1ux"]
+[ext_resource type="Texture2D" uid="uid://dwlsiwivfcwcx" path="res://sprites/UI/Win_GoToNextLevel.png" id="8_l3d1a"]
+
+[node name="LostScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Lose" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("1_ab055")
+
+[node name="PausingReturnToMenu" type="Sprite2D" parent="."]
+position = Vector2(960, 850)
+texture = ExtResource("3_qocni")
+
+[node name="Button" type="Button" parent="PausingReturnToMenu"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -274.0
+offset_top = 12.0
+offset_right = 277.0
+offset_bottom = 103.0
+script = ExtResource("4_p1784")
+
+[node name="WinQuitGame" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("4_bujfg")
+
+[node name="Button" type="Button" parent="WinQuitGame"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -212.0
+offset_top = 240.0
+offset_right = 170.0
+offset_bottom = 326.0
+script = ExtResource("6_7w2gc")
+
+[node name="WinPlayAgain" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("6_613xp")
+
+[node name="Button" type="Button" parent="WinPlayAgain"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -214.0
+offset_top = 27.0
+offset_right = 168.0
+offset_bottom = 113.0
+script = ExtResource("7_8v1ux")
+
+[node name="WinGoToNextLevel" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("8_l3d1a")
+
+[node name="Button" type="Button" parent="WinGoToNextLevel"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -365.0
+offset_top = 135.0
+offset_right = 363.0
+offset_bottom = 223.0

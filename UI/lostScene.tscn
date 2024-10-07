@@ -1,0 +1,60 @@
+[gd_scene load_steps=8 format=3 uid="uid://77kfqy208v3"]
+
+[ext_resource type="Texture2D" uid="uid://ddkvl1fg5hqbg" path="res://sprites/UI/Lose.png" id="1_ekguw"]
+[ext_resource type="Texture2D" uid="uid://be5xqjkchvxal" path="res://sprites/UI/Lose_PlayAgain.png" id="2_onowl"]
+[ext_resource type="Texture2D" uid="uid://b48k62tdnhe3o" path="res://sprites/UI/Pausing_ReturnToMenu.png" id="3_ud875"]
+[ext_resource type="Texture2D" uid="uid://dcirll6l61mg3" path="res://sprites/UI/Lose_QuitGame.png" id="4_7dao7"]
+[ext_resource type="Script" path="res://scripts/UI/ReturnToMenuButton.cs" id="4_u8tlv"]
+[ext_resource type="Script" path="res://scripts/UI/ExitButton.cs" id="5_xutxd"]
+[ext_resource type="AudioStream" uid="uid://b87yl77wlsn3h" path="res://audios/you lose.mp3" id="7_2aagi"]
+
+[node name="LostScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Lose" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("1_ekguw")
+
+[node name="LosePlayAgain" type="Sprite2D" parent="."]
+position = Vector2(959, 540)
+texture = ExtResource("2_onowl")
+
+[node name="Button" type="Button" parent="LosePlayAgain"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -214.0
+offset_top = 18.0
+offset_right = 168.0
+offset_bottom = 104.0
+
+[node name="PausingReturnToMenu" type="Sprite2D" parent="."]
+position = Vector2(961, 758)
+texture = ExtResource("3_ud875")
+
+[node name="Button" type="Button" parent="PausingReturnToMenu"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -274.0
+offset_top = 12.0
+offset_right = 277.0
+offset_bottom = 103.0
+script = ExtResource("4_u8tlv")
+
+[node name="LoseQuitGame" type="Sprite2D" parent="."]
+position = Vector2(963, 538)
+texture = ExtResource("4_7dao7")
+
+[node name="Button" type="Button" parent="LoseQuitGame"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -212.0
+offset_top = 132.0
+offset_right = 170.0
+offset_bottom = 218.0
+script = ExtResource("5_xutxd")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_2aagi")
+autoplay = true
