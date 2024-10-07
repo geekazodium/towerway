@@ -16,26 +16,29 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Lose" type="Sprite2D" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Lose" type="Sprite2D" parent="CanvasLayer"]
 position = Vector2(960, 540)
 texture = ExtResource("1_ekguw")
 
-[node name="LosePlayAgain" type="Sprite2D" parent="."]
+[node name="LosePlayAgain" type="Sprite2D" parent="CanvasLayer"]
+visible = false
 position = Vector2(959, 540)
 texture = ExtResource("2_onowl")
 
-[node name="Button" type="Button" parent="LosePlayAgain"]
+[node name="Button" type="Button" parent="CanvasLayer/LosePlayAgain"]
 modulate = Color(1, 1, 1, 0)
 offset_left = -214.0
 offset_top = 18.0
 offset_right = 168.0
 offset_bottom = 104.0
 
-[node name="PausingReturnToMenu" type="Sprite2D" parent="."]
+[node name="PausingReturnToMenu" type="Sprite2D" parent="CanvasLayer"]
 position = Vector2(961, 758)
 texture = ExtResource("3_ud875")
 
-[node name="Button" type="Button" parent="PausingReturnToMenu"]
+[node name="Button" type="Button" parent="CanvasLayer/PausingReturnToMenu"]
 modulate = Color(1, 1, 1, 0)
 offset_left = -274.0
 offset_top = 12.0
@@ -43,11 +46,11 @@ offset_right = 277.0
 offset_bottom = 103.0
 script = ExtResource("4_u8tlv")
 
-[node name="LoseQuitGame" type="Sprite2D" parent="."]
+[node name="LoseQuitGame" type="Sprite2D" parent="CanvasLayer"]
 position = Vector2(963, 538)
 texture = ExtResource("4_7dao7")
 
-[node name="Button" type="Button" parent="LoseQuitGame"]
+[node name="Button" type="Button" parent="CanvasLayer/LoseQuitGame"]
 modulate = Color(1, 1, 1, 0)
 offset_left = -212.0
 offset_top = 132.0

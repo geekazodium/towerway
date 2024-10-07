@@ -8,6 +8,7 @@ use godot::obj::WithBaseField;
 use godot::prelude::godot_api;
 use godot::prelude::GodotClass;
 
+use crate::ingame_state_tracker::GameplayState;
 use crate::ingame_state_tracker::IngameStateTracker;
 
 #[derive(GodotClass)]
@@ -45,9 +46,10 @@ impl PlayerHealth{
         let mut health_bar = self.get_health_bar().expect("no healthbar found");
         health_bar.set_value(self.health as f64);
         if self.health <= 0 {
-            let inst = self.get_game_over_scene().unwrap().instantiate().unwrap();
-            self.get_game_state().unwrap().bind_mut().die();
-            self.base_mut().add_child(inst);
+            self.base().get_tree().unwrap().change_scene_to_packed(self.get_game_over_scene().unwrap());
+            if self.get_game_state().unwrap().bind().get_state() == GameplayState::DEFENDING{
+                self.get_game_state().unwrap().bind_mut().die();
+            }
         }
     }
 }

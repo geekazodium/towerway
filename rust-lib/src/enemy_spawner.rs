@@ -99,7 +99,9 @@ struct EnemySpawnerProgressTracker{
     spawners: Array<Gd<EnemySpawner>>,
     base: Base<Area2D>,
     #[export]
-    gamestate: Option<Gd<IngameStateTracker>>
+    gamestate: Option<Gd<IngameStateTracker>>,
+    #[export]
+    win_screen: Option<Gd<PackedScene>>
 }
 
 #[godot_api]
@@ -119,6 +121,9 @@ impl IArea2D for EnemySpawnerProgressTracker{
         self.get_progress_bar().unwrap().set_value(active_spawners_count as f64);
 
         if active_spawners_count == 0 && self.base().get_overlapping_areas().len() == 0{
+            if self.get_gamestate().unwrap().bind().get_state() != GameplayState::SUCCESS{
+                self.base().get_tree().unwrap().change_scene_to_packed(self.get_win_screen().unwrap());
+            }
             self.get_gamestate().unwrap().bind_mut().win();
         }
     }

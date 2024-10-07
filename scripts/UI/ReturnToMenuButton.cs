@@ -13,7 +13,8 @@ public partial class ReturnToMenuButton : BaseButton
 	{
 		if (ButtonPressed)
 		{
-			GetTree().ChangeSceneToFile("res://UI/mainMenu.tscn");
+			GetTree().Paused = false;
+			GetTree().ChangeSceneToFile("res://ui/mainMenu.tscn");
 		}
 	}
 }

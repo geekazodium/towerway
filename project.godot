@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Towerway"
-run/main_scene="res://level_1.tscn"
+run/main_scene="res://ui/mainMenu.tscn"
 config/features=PackedStringArray("4.3", "C#", "GL Compatibility")
 config/icon="res://tilemap/icon.svg"
 

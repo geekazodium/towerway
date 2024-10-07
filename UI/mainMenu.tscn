@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dv64nc0dvvm48"]
+[gd_scene load_steps=22 format=3 uid="uid://dv64nc0dvvm48"]
 
 [ext_resource type="Texture2D" uid="uid://tohqb3at7l1o" path="res://sprites/UI/cover.png" id="1_po01p"]
 [ext_resource type="Texture2D" uid="uid://cus8g62l77rqu" path="res://sprites/UI/press to start.png" id="2_ncvuc"]
@@ -8,15 +8,19 @@
 [ext_resource type="Texture2D" uid="uid://2abe5bj16da2" path="res://sprites/UI/level1 icon.png" id="6_2ar1d"]
 [ext_resource type="Texture2D" uid="uid://bfhbwik5jsj28" path="res://sprites/UI/level1 icon_selected.png" id="7_rxvmn"]
 [ext_resource type="Script" path="res://scripts/UI/LevelIcon.cs" id="8_tnkut"]
+[ext_resource type="PackedScene" uid="uid://biuh3awiya3cj" path="res://levels/level_1.tscn" id="9_74ek2"]
 [ext_resource type="Texture2D" uid="uid://bl7yhtxem7eou" path="res://sprites/UI/level2 icon.png" id="9_ubwr7"]
 [ext_resource type="Texture2D" uid="uid://d2tipmq6mymmr" path="res://sprites/UI/level2 icon_selected.png" id="10_t5x0b"]
 [ext_resource type="Texture2D" uid="uid://l7ct1xrkdprp" path="res://sprites/UI/level3 icon.png" id="11_t5m6k"]
 [ext_resource type="Texture2D" uid="uid://bivfauf6os12k" path="res://sprites/UI/level3 icon_selected.png" id="12_23l6i"]
+[ext_resource type="PackedScene" uid="uid://dkj506flcdmhs" path="res://levels/level_2.tscn" id="12_p0hu6"]
 [ext_resource type="Texture2D" uid="uid://dtnxiaowyf7j" path="res://sprites/UI/level4 icon.png" id="13_wgq8m"]
 [ext_resource type="Texture2D" uid="uid://bbhe6fl4x1lay" path="res://sprites/UI/level4 icon_selected.png" id="14_rgnvf"]
 [ext_resource type="Texture2D" uid="uid://detpuuqjo83p1" path="res://sprites/UI/Quit button.png" id="15_2jg0c"]
+[ext_resource type="PackedScene" uid="uid://drak2aoxc3vva" path="res://levels/level_3.tscn" id="15_txbap"]
 [ext_resource type="Script" path="res://scripts/UI/ExitButton.cs" id="16_3765g"]
 [ext_resource type="AudioStream" uid="uid://83t84vlqhimd" path="res://audios/main menu.mp3" id="17_2kq25"]
+[ext_resource type="PackedScene" uid="uid://ccuofvxvm74f7" path="res://levels/level_4.tscn" id="18_yk686"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -61,6 +65,7 @@ texture_normal = ExtResource("6_2ar1d")
 texture_pressed = ExtResource("7_rxvmn")
 texture_hover = ExtResource("7_rxvmn")
 script = ExtResource("8_tnkut")
+level_scene = ExtResource("9_74ek2")
 metadata/Location = "res://level_1.tscn"
 
 [node name="Level2Button" type="TextureButton" parent="LevelSelection/HBoxContainer"]
@@ -69,6 +74,7 @@ texture_normal = ExtResource("9_ubwr7")
 texture_pressed = ExtResource("10_t5x0b")
 texture_hover = ExtResource("10_t5x0b")
 script = ExtResource("8_tnkut")
+level_scene = ExtResource("12_p0hu6")
 metadata/Location = ""
 
 [node name="Level3Button" type="TextureButton" parent="LevelSelection/HBoxContainer"]
@@ -77,6 +83,7 @@ texture_normal = ExtResource("11_t5m6k")
 texture_pressed = ExtResource("12_23l6i")
 texture_hover = ExtResource("12_23l6i")
 script = ExtResource("8_tnkut")
+level_scene = ExtResource("15_txbap")
 metadata/Location = ""
 
 [node name="Level4Button" type="TextureButton" parent="LevelSelection/HBoxContainer"]
@@ -85,6 +92,7 @@ texture_normal = ExtResource("13_wgq8m")
 texture_pressed = ExtResource("14_rgnvf")
 texture_hover = ExtResource("14_rgnvf")
 script = ExtResource("8_tnkut")
+level_scene = ExtResource("18_yk686")
 metadata/Location = ""
 
 [node name="ExitButton" type="TextureButton" parent="LevelSelection"]

@@ -5,3 +5,5 @@
 #temp folders
 .vs/
 .vscode/
+
+export/

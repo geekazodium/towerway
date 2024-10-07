@@ -1,9 +1,9 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://c5u80tio66lj4"]
 
-[ext_resource type="Texture2D" uid="uid://bhpkthn26dacg" path="res://tilemap/Cells.png" id="1_v3qqo"]
+[ext_resource type="Texture2D" uid="uid://d4jsvexx6a8ob" path="res://sprites/cells/Cells.png" id="1_am230"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3ucyr"]
-texture = ExtResource("1_v3qqo")
+texture = ExtResource("1_am230")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
 0:0/0/custom_data_0 = 1
@@ -12,7 +12,6 @@ texture_region_size = Vector2i(64, 64)
 2:0/0 = 0
 2:0/0/custom_data_0 = 3
 3:0/0 = 0
-3:0/0/custom_data_0 = 4
 0:1/0 = 0
 0:1/0/custom_data_0 = 5
 1:1/0 = 0

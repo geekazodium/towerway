@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://crmeyeg7r7mx5"]
+
+[ext_resource type="AudioStream" uid="uid://cmiv6cexnnsvc" path="res://audios/fire.wav" id="1_23c1g"]
+[ext_resource type="Script" path="res://audios/helper/AutoplayWithPitchShift.cs" id="2_mbvp7"]
+
+[node name="DeleteAfter" type="DeleteAfter"]
+delay = 1.0
+
+[node name="FireSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_23c1g")
+script = ExtResource("2_mbvp7")
+min = 0.85
+range = 0.45

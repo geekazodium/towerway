@@ -46,6 +46,7 @@ offset_bottom = 326.0
 script = ExtResource("6_7w2gc")
 
 [node name="WinPlayAgain" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(960, 540)
 texture = ExtResource("6_613xp")
 
@@ -58,6 +59,7 @@ offset_bottom = 113.0
 script = ExtResource("7_8v1ux")
 
 [node name="WinGoToNextLevel" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(960, 540)
 texture = ExtResource("8_l3d1a")
 

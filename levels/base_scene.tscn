@@ -1,0 +1,296 @@
+[gd_scene load_steps=26 format=4 uid="uid://de7m0b06g0c6i"]
+
+[ext_resource type="TileSet" uid="uid://c5u80tio66lj4" path="res://tilemap/cell_tileset.tres" id="1_j4t6m"]
+[ext_resource type="PackedScene" uid="uid://crmeyeg7r7mx5" path="res://audios/helper/fire_sfx.tscn" id="1_v6on2"]
+[ext_resource type="PackedScene" uid="uid://ddu6j7d1e1je2" path="res://projectiles/weak.tscn" id="2_v2han"]
+[ext_resource type="PackedScene" uid="uid://41wb4hgqmteh" path="res://projectiles/hellfire.tscn" id="3_21air"]
+[ext_resource type="Texture2D" uid="uid://civ0xe71255u8" path="res://ui/background.tres" id="4_gh0um"]
+[ext_resource type="Shader" path="res://tilemap/transparency.gdshader" id="5_2f0q1"]
+[ext_resource type="TileSet" uid="uid://bopxoet0k8bui" path="res://tilemap/Background.tres" id="5_utadu"]
+[ext_resource type="PackedScene" uid="uid://77kfqy208v3" path="res://ui/lostScene.tscn" id="6_44diw"]
+[ext_resource type="PackedScene" uid="uid://cjvh0bcvmrkyj" path="res://user_interface.tscn" id="7_de20a"]
+[ext_resource type="Texture2D" uid="uid://ccyybl14b6vjk" path="res://sprites/cells/Erase.png" id="8_q2j24"]
+[ext_resource type="Texture2D" uid="uid://nifd3an20is7" path="res://ui/images/progressBar_fill_level4.png" id="8_wg1pf"]
+[ext_resource type="Texture2D" uid="uid://1mlc02hknsmk" path="res://ui/images/progressBar_fill_level3.png" id="9_oq6r8"]
+[ext_resource type="Texture2D" uid="uid://clw7kyr3yy6u4" path="res://sprites/cells/blueprint_select.tres" id="11_4ha63"]
+[ext_resource type="Texture2D" uid="uid://d243vtyo5bm1i" path="res://sprites/game_ui/2.png" id="11_ggxqx"]
+[ext_resource type="Texture2D" uid="uid://dfwir8vxp4lqb" path="res://sprites/game_ui/1.png" id="11_jvroe"]
+[ext_resource type="Texture2D" uid="uid://c8vk2bnkqannv" path="res://sprites/game_ui/4.png" id="11_uu62o"]
+[ext_resource type="Texture2D" uid="uid://d1hxna4tso5nh" path="res://sprites/UI/Pause button .png" id="12_jy55t"]
+[ext_resource type="Texture2D" uid="uid://c00fmw42jgwk1" path="res://sprites/game_ui/3.png" id="12_u7kjm"]
+[ext_resource type="PackedScene" uid="uid://dp821wp0s6ejt" path="res://ui/pauseScene.tscn" id="13_8v4ob"]
+[ext_resource type="PackedScene" uid="uid://croilwjccd5pk" path="res://enemies/basic_test_enemy.tscn" id="13_kehpj"]
+[ext_resource type="PackedScene" uid="uid://cot0i4igxcis7" path="res://ui/winScene.tscn" id="14_o3p2h"]
+[ext_resource type="PackedScene" uid="uid://dj8p07ovxy33u" path="res://ui/not_enough_resources.tscn" id="22_wtrd2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8p1uy"]
+shader = ExtResource("5_2f0q1")
+shader_parameter/transparency = 0.3
+
+[sub_resource type="Curve2D" id="Curve2D_b5qd7"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 1664, 128, 0, 0, 0, 0, 64, 128, 0, 0, 0, 0, 64, 640, 0, 0, 0, 0, 896, 640, 0, 0, 0, 0, 896, 768, 0, 0, 0, 0, 384, 768, 0, 0, 0, 0, 384, 1024, 0, 0, 0, 0, 1280, 1024, 0, 0, 0, 0, 1280, 448, 0, 0, 0, 0, 704, 448)
+}
+point_count = 10
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ts3fe"]
+size = Vector2(10000, 10000)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="DefenseLayer" type="DefenseLayer" parent="."]
+update_phys_interval = 20
+rect = Rect2i(0, 0, 26, 21)
+audio_scene_arr = Array[PackedScene]([ExtResource("1_v6on2"), ExtResource("1_v6on2")])
+tile_map_data = PackedByteArray("AAAAAAcAAAAAAAAAAAABAAcAAAAAAAAAAAACAAcAAAAAAAAAAAACAAgAAAAAAAAAAAADAAcAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA4AAAAAAAAAAAABAAgAAAAAAAAAAAABAAkAAAAAAAAAAAABAAoAAAAAAAAAAAACAAkAAAAAAAAAAAACAAoAAAAAAAAAAAACAA0AAAAAAAAAAAADAAgAAAAAAAAAAAADAAkAAAAAAAAAAAADAAoAAAAAAAAAAAADAA0AAAAAAAAAAAAEAA0AAAAAAAAAAAAFAA0AAAAAAAAAAAAFAA4AAAAAAAAAAAAGAAcAAAAAAAAAAAAGAAgAAAAAAAAAAAAGAAkAAAAAAAAAAAAGAAoAAAAAAAAAAAAGAAsAAAAAAAAAAAAGAAwAAAAAAAAAAAAGAA0AAAAAAAAAAAAGAA4AAAAAAAAAAAAOAAcAAAAAAAAAAAAOAAgAAAAAAAAAAAAOAAkAAAAAAAAAAAAPAAcAAAAAAAAAAAAPAAgAAAAAAAAAAAAPAAkAAAAAAAAAAAAQAAcAAAAAAAAAAAAQAAgAAAAAAAAAAAAQAAkAAAAAAAAAAAARAAcAAAAAAAAAAAARAAgAAAAAAAAAAAARAAkAAAAAAAAAAAASAAcAAAAAAAAAAAASAAgAAAAAAAAAAAASAAkAAAAAAAAAAAATAAcAAAAAAAAAAAATAAgAAAAAAAAAAAATAAkAAAAAAAAAAAAAAA0AAAAAAAAAAAABAA0AAAAAAAAAAAABAA4AAAAAAAAAAAACAA4AAAAAAAAAAAADAA4AAAAAAAAAAAAEAA4AAAAAAAAAAAAUAAcAAAAAAAAAAAAUAAgAAAAAAAAAAAAUAAkAAAAAAAAAAAAVAAcAAAAAAAAAAAAVAAgAAAAAAAAAAAAVAAkAAAAAAAAAAAAWAAcAAAAAAAAAAAAWAAgAAAAAAAAAAAAWAAkAAAAAAAAAAAAXAAcAAAAAAAAAAAAXAAgAAAAAAAAAAAAXAAkAAAAAAAAAAAAXAAoAAAAAAAAAAAAXAAsAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAAwAAAAAAAAAAAABAAsAAAAAAAAAAAABAAwAAAAAAAAAAAACAAsAAAAAAAAAAAACAAwAAAAAAAAAAAADAAsAAAAAAAAAAAADAAwAAAAAAAAAAAAEAAcAAAAAAAAAAAAEAAgAAAAAAAAAAAAEAAkAAAAAAAAAAAAEAAoAAAACAAAAAAAEAAsAAAAAAAAAAAAEAAwAAAAAAAAAAAAFAAcAAAAAAAAAAAAFAAgAAAAAAAAAAAAFAAkAAAAAAAAAAAAFAAoAAAAAAAAAAAAFAAsAAAAAAAAAAAAFAAwAAAAAAAAAAAAOAAoAAAAAAAAAAAAOAAsAAAAAAAAAAAAPAAoAAAAAAAAAAAAPAAsAAAAAAAAAAAAQAAoAAAAAAAAAAAAQAAsAAAAAAAAAAAARAAoAAAAAAAAAAAARAAsAAAAAAAAAAAASAAoAAAAAAAAAAAASAAsAAAAAAAAAAAATAAoAAAAAAAAAAAATAAsAAAAAAAAAAAAUAAoAAAAAAAAAAAAUAAsAAAAAAAAAAAAVAAoAAAAAAAAAAAAVAAsAAAAAAAAAAAAWAAoAAAAAAAAAAAAWAAsAAAAAAAAAAAAOAAwAAAAAAAAAAAAPAAwAAAAAAAAAAAAQAAwAAAAAAAAAAAARAAwAAAAAAAAAAAASAAwAAAAAAAAAAAATAAwAAAAAAAAAAAAUAAwAAAAAAAAAAAAVAAwAAAAAAAAAAAAWAAwAAAAAAAAAAAAXAAwAAAAAAAAAAAAFAAYAAAAAAAAAAAAGAAYAAAAAAAAAAAAFAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAQAA8AAAADAAAAAAAPAA8AAAADAAAAAAAPABAAAAADAAAAAAARABAAAAADAAAAAAAQABAAAAADAAAAAAAOABAAAAADAAAAAAAOAA8AAAADAAAAAAAOAA4AAAADAAAAAAAOAA0AAAAAAAAAAAAPAA0AAAAAAAAAAAAPAA4AAAADAAAAAAAQAA4AAAADAAAAAAARAA8AAAADAAAAAAARAA4AAAADAAAAAAARAA0AAAAAAAAAAAAQAA0AAAAAAAAAAAASAA4AAAADAAAAAAASAA0AAAAAAAAAAAATAA0AAAAAAAAAAAATAA4AAAADAAAAAAASAA8AAAADAAAAAAAUAA4AAAADAAAAAAAVAA4AAAADAAAAAAAVAA0AAAAAAAAAAAAWAA0AAAAAAAAAAAAUAA0AAAAAAAAAAAAXAA0AAAAAAAAAAAAXAA4AAAADAAAAAAAXAA8AAAADAAAAAAAYAA8AAAADAAAAAAAZAA8AAAADAAAAAAAZAA4AAAADAAAAAAAYAA4AAAADAAAAAAAYABAAAAADAAAAAAAZABAAAAADAAAAAAAXABAAAAADAAAAAAAWABAAAAADAAAAAAAVABAAAAADAAAAAAAUABAAAAADAAAAAAAUAA8AAAADAAAAAAATAA8AAAADAAAAAAASABAAAAADAAAAAAATABAAAAADAAAAAAAVAA8AAAADAAAAAAAWAA8AAAADAAAAAAAWAA4AAAADAAAAAAAHAAUAAAAAAAAAAAAHAAYAAAAAAAAAAAAHAAcAAAAAAAAAAAAHAAgAAAAAAAAAAAAHAAkAAAAAAAAAAAAHAAoAAAAAAAAAAAAHAAsAAAAAAAAAAAAHAAwAAAAAAAAAAAAHAA0AAAAAAAAAAAAHAA4AAAAAAAAAAAAIAAUAAAAAAAAAAAAIAAYAAAAAAAAAAAAIAAcAAAAAAAAAAAAIAAgAAAAAAAAAAAAIAAkAAAAAAAAAAAAIAAoAAAAAAAAAAAAIAAsAAAAAAAAAAAAIAAwAAAAAAAAAAAAIAA0AAAAAAAAAAAAIAA4AAAAAAAAAAAAJAAUAAAAAAAAAAAAJAAYAAAAAAAAAAAAJAAcAAAAAAAAAAAAJAAgAAAAAAAAAAAAJAAkAAAAAAAAAAAAJAAoAAAAAAAAAAAAJAAsAAAAAAAAAAAAJAAwAAAAAAAAAAAAJAA0AAAAAAAAAAAAJAA4AAAAAAAAAAAAOAAEAAAADAAAAAAAOAAIAAAADAAAAAAAOAAMAAAADAAAAAAAOAAQAAAADAAAAAAAPAAEAAAADAAAAAAAPAAIAAAADAAAAAAAPAAMAAAADAAAAAAAPAAQAAAADAAAAAAAQAAEAAAADAAAAAAAQAAIAAAADAAAAAAAQAAMAAAADAAAAAAAQAAQAAAADAAAAAAARAAEAAAADAAAAAAARAAIAAAADAAAAAAARAAMAAAADAAAAAAARAAQAAAADAAAAAAASAAEAAAADAAAAAAASAAIAAAADAAAAAAASAAMAAAADAAAAAAASAAQAAAADAAAAAAATAAEAAAADAAAAAAATAAIAAAADAAAAAAATAAMAAAADAAAAAAATAAQAAAADAAAAAAAUAAEAAAADAAAAAAAUAAIAAAADAAAAAAAUAAMAAAADAAAAAAAUAAQAAAADAAAAAAAVAAEAAAADAAAAAAAVAAIAAAADAAAAAAAVAAMAAAADAAAAAAAVAAQAAAADAAAAAAAWAAEAAAADAAAAAAAWAAIAAAADAAAAAAAWAAMAAAADAAAAAAAWAAQAAAADAAAAAAAXAAEAAAADAAAAAAAXAAIAAAADAAAAAAAXAAMAAAADAAAAAAAXAAQAAAADAAAAAAAYAAEAAAADAAAAAAAYAAIAAAADAAAAAAAYAAMAAAADAAAAAAAYAAQAAAADAAAAAAAZAAEAAAADAAAAAAAZAAIAAAADAAAAAAAZAAMAAAADAAAAAAAZAAQAAAADAAAAAAAMAAEAAAADAAAAAAAMAAIAAAADAAAAAAAMAAMAAAADAAAAAAAMAAQAAAADAAAAAAANAAEAAAADAAAAAAANAAIAAAADAAAAAAANAAMAAAADAAAAAAANAAQAAAADAAAAAAACAAMAAAAAAAAAAAACAAQAAAAAAAAAAAADAAMAAAAAAAAAAAADAAQAAAAAAAAAAAAEAAMAAAAAAAAAAAAEAAQAAAAAAAAAAAAFAAMAAAAAAAAAAAAFAAQAAAAAAAAAAAAGAAMAAAAAAAAAAAAGAAQAAAAAAAAAAAAHAAMAAAAAAAAAAAAHAAQAAAAAAAAAAAAIAAMAAAAAAAAAAAAIAAQAAAAAAAAAAAAJAAMAAAAAAAAAAAAJAAQAAAAAAAAAAAAAAA8AAAAAAAAAAAAAABAAAAAAAAAAAAABAA8AAAAAAAAAAAABABAAAAAAAAAAAAACAA8AAAAAAAAAAAACABAAAAAAAAAAAAADAA8AAAAAAAAAAAADABAAAAAAAAAAAAAEAA8AAAAAAAAAAAAEABAAAAAAAAAAAAAFAA8AAAAAAAAAAAAFABAAAAAAAAAAAAAGAA8AAAAAAAAAAAAGABAAAAAAAAAAAAAHAA8AAAAAAAAAAAAHABAAAAAAAAAAAAAIAA8AAAAAAAAAAAAIABAAAAAAAAAAAAAJAA8AAAAAAAAAAAAJABAAAAAAAAAAAAA=")
+tile_set = ExtResource("1_j4t6m")
+
+[node name="EventFire" type="EventFire" parent="DefenseLayer"]
+projectile = ExtResource("2_v2han")
+event_name = "overpopulate_death"
+
+[node name="EventFire2" type="EventFire" parent="DefenseLayer"]
+projectile = ExtResource("3_21air")
+event_name = "extra_overpopulate_death"
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1520.0
+offset_top = -800.0
+offset_right = 3032.0
+offset_bottom = -86.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 4)
+texture = ExtResource("4_gh0um")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(832, 576)
+
+[node name="CameraScaler" type="CameraScaler" parent="Camera2D" node_paths=PackedStringArray("camera")]
+base_height = 1080.0
+camera = NodePath("..")
+
+[node name="Background" type="TileMapLayer" parent="."]
+z_index = -1
+scale = Vector2(0.256, 0.256)
+tile_set = ExtResource("5_utadu")
+
+[node name="Preview" type="TileMapLayer" parent="."]
+z_index = 10
+material = SubResource("ShaderMaterial_8p1uy")
+tile_set = ExtResource("1_j4t6m")
+
+[node name="PlayerHealth" type="PlayerHealth" parent="." node_paths=PackedStringArray("game_state", "health_bar")]
+max_health = 10
+health = 10
+game_over_scene = ExtResource("6_44diw")
+game_state = NodePath("../IngameStateTracker")
+health_bar = NodePath("../CanvasLayer/HealthProgressBar")
+
+[node name="PlayerEnergy" type="PlayerEnergy" parent="." node_paths=PackedStringArray("display", "game_state")]
+max_energy = 500
+energy_interval = 0.5
+energy_per_interval = 10
+display = NodePath("../CanvasLayer/ResourceProgressBar")
+game_state = NodePath("../IngameStateTracker")
+
+[node name="CellPatternToolbox" type="CellPatternToolbox" parent="." node_paths=PackedStringArray("patterns", "gamestate", "transparency_pane", "next_pattern_button", "prev_pattern_button", "switch_brush_button", "tile_picker", "blueprint_picker")]
+patterns = [NodePath("CellPattern"), NodePath("CellPattern2"), NodePath("CellPattern3"), NodePath("CellPattern4")]
+brush_tiles = Array[int]([0, 2])
+gamestate = NodePath("../IngameStateTracker")
+transparency_pane = NodePath("../TextureRect")
+next_pattern_button = NodePath("../CanvasLayer/NextPatternButton")
+prev_pattern_button = NodePath("../CanvasLayer/PrevPatternButton")
+switch_brush_button = NodePath("../CanvasLayer/SwitchBrushButton")
+tile_picker = NodePath("../CanvasLayer/TextureRect/SelectedHotbar")
+blueprint_picker = NodePath("../CanvasLayer/SelectedBlueprint/SelectedHotbar")
+
+[node name="CellPattern" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source", "not_enough_resources_alert")]
+bounds = Rect2i(-3, -3, 4, 4)
+target = NodePath("../../DefenseLayer")
+preview = NodePath("../../Preview")
+energy_source = NodePath("../../PlayerEnergy")
+not_enough_resources_alert = NodePath("../../NotEnoughResources")
+visible = false
+z_index = 1
+tile_map_data = PackedByteArray("AAAFAAUAAAABAAAAAAAGAAUAAAABAAAAAAAGAAQAAAABAAAAAAAGAAMAAAABAAAAAAAEAAQAAAABAAAAAAA=")
+tile_set = ExtResource("1_j4t6m")
+
+[node name="CellPattern2" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source", "not_enough_resources_alert")]
+bounds = Rect2i(-3, -3, 4, 4)
+target = NodePath("../../DefenseLayer")
+preview = NodePath("../../Preview")
+energy_source = NodePath("../../PlayerEnergy")
+not_enough_resources_alert = NodePath("../../NotEnoughResources")
+visible = false
+z_index = 1
+tile_map_data = PackedByteArray("AAAOAAUAAAABAAAAAAAPAAUAAAABAAAAAAAQAAUAAAABAAAAAAARAAUAAAABAAAAAAARAAQAAAABAAAAAAARAAMAAAABAAAAAAAQAAIAAAABAAAAAAANAAQAAAABAAAAAAANAAIAAAABAAAAAAA=")
+tile_set = ExtResource("1_j4t6m")
+
+[node name="CellPattern3" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source", "not_enough_resources_alert")]
+bounds = Rect2i(-3, -3, 4, 4)
+target = NodePath("../../DefenseLayer")
+preview = NodePath("../../Preview")
+energy_source = NodePath("../../PlayerEnergy")
+not_enough_resources_alert = NodePath("../../NotEnoughResources")
+visible = false
+z_index = 1
+tile_set = ExtResource("1_j4t6m")
+
+[node name="CellPattern4" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source", "not_enough_resources_alert")]
+bounds = Rect2i(-3, -3, 4, 4)
+target = NodePath("../../DefenseLayer")
+preview = NodePath("../../Preview")
+energy_source = NodePath("../../PlayerEnergy")
+not_enough_resources_alert = NodePath("../../NotEnoughResources")
+visible = false
+z_index = 1
+tile_set = ExtResource("1_j4t6m")
+
+[node name="CanvasLayer" parent="." instance=ExtResource("7_de20a")]
+
+[node name="ResourceProgressBar" parent="CanvasLayer" index="0"]
+offset_left = 56.0
+offset_top = 16.0
+offset_right = 368.0
+offset_bottom = 160.0
+value = 100.0
+texture_under = ExtResource("8_wg1pf")
+texture_progress = ExtResource("9_oq6r8")
+
+[node name="Button" parent="CanvasLayer" index="1"]
+offset_left = -232.0
+offset_top = -72.0
+offset_right = 603.0
+offset_bottom = 107.0
+scale = Vector2(0.3, 0.3)
+text = ""
+icon = ExtResource("11_uu62o")
+
+[node name="NextPatternButton" parent="CanvasLayer" index="3"]
+offset_left = -232.0
+offset_top = -136.0
+offset_right = 603.0
+offset_bottom = 43.0
+scale = Vector2(0.3, 0.3)
+text = ""
+icon = ExtResource("12_u7kjm")
+
+[node name="PrevPatternButton" parent="CanvasLayer" index="4"]
+offset_left = -232.0
+offset_top = -200.0
+offset_right = 607.0
+offset_bottom = -21.0
+scale = Vector2(0.3, 0.3)
+text = "
+"
+icon = ExtResource("11_ggxqx")
+
+[node name="SwitchBrushButton" parent="CanvasLayer" index="5"]
+offset_left = -232.0
+offset_top = -264.0
+offset_right = 603.0
+offset_bottom = -85.0
+scale = Vector2(0.3, 0.3)
+text = ""
+icon = ExtResource("11_jvroe")
+
+[node name="TextureRect" parent="CanvasLayer" index="6"]
+offset_left = -72.0
+offset_top = -384.0
+offset_bottom = -320.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/TextureRect" index="1"]
+layout_mode = 0
+offset_left = -64.0
+offset_right = 436.0
+offset_bottom = 500.0
+scale = Vector2(0.128, 0.128)
+texture = ExtResource("8_q2j24")
+
+[node name="SelectedBlueprint" parent="CanvasLayer" index="7"]
+offset_top = -648.0
+offset_right = 248.0
+offset_bottom = -584.0
+texture = ExtResource("11_4ha63")
+
+[node name="SelectedHotbar" parent="CanvasLayer/SelectedBlueprint" index="0"]
+min_pos = Vector2(-32, -32)
+offset_left = -31.9998
+offset_right = 96.0002
+
+[node name="TextureButton" type="TextureButton" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 8.0
+offset_right = 30.0
+offset_bottom = 158.0
+grow_horizontal = 0
+scale = Vector2(0.75, 0.75)
+texture_normal = ExtResource("12_jy55t")
+
+[node name="EnemyPath" type="EnemyPath" parent="." node_paths=PackedStringArray("player_health")]
+player_health = NodePath("../PlayerHealth")
+curve = SubResource("Curve2D_b5qd7")
+
+[node name="EnemySpawner" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("game_state")]
+interval = 1.2
+timer = 100.0
+enemies = ExtResource("13_kehpj")
+spawns_left = 10
+game_state = NodePath("../../IngameStateTracker")
+
+[node name="EnemySpawner2" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("wait_for", "game_state")]
+interval = 0.8
+timer = 100.0
+enemies = ExtResource("13_kehpj")
+wait_for = NodePath("../EnemySpawner")
+spawns_left = 20
+game_state = NodePath("../../IngameStateTracker")
+
+[node name="EnemySpawner3" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("wait_for", "game_state")]
+interval = 0.35
+timer = 100.0
+enemies = ExtResource("13_kehpj")
+wait_for = NodePath("../EnemySpawner2")
+spawns_left = 50
+game_state = NodePath("../../IngameStateTracker")
+
+[node name="EnemySpawner4" type="EnemySpawner" parent="EnemyPath" node_paths=PackedStringArray("wait_for", "game_state")]
+interval = 0.2
+timer = 100.0
+enemies = ExtResource("13_kehpj")
+wait_for = NodePath("../EnemySpawner3")
+spawns_left = 75
+game_state = NodePath("../../IngameStateTracker")
+
+[node name="IngameStateTracker" type="IngameStateTracker" parent="." node_paths=PackedStringArray("drawing_done_button")]
+drawing_done_button = NodePath("../CanvasLayer/Button")
+
+[node name="EnemySpawnerProgressTracker" type="EnemySpawnerProgressTracker" parent="." node_paths=PackedStringArray("progress_bar", "spawners", "gamestate")]
+progress_bar = NodePath("../CanvasLayer/TextureProgressBar")
+spawners = [NodePath("../EnemyPath/EnemySpawner"), NodePath("../EnemyPath/EnemySpawner2"), NodePath("../EnemyPath/EnemySpawner3"), NodePath("../EnemyPath/EnemySpawner4")]
+gamestate = NodePath("../IngameStateTracker")
+win_screen = ExtResource("14_o3p2h")
+visible = false
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemySpawnerProgressTracker"]
+shape = SubResource("RectangleShape2D_ts3fe")
+
+[node name="PauseStateManager" type="PauseStateManager" parent="." node_paths=PackedStringArray("pause_button")]
+pause_scene = ExtResource("13_8v4ob")
+pause_button = NodePath("../CanvasLayer/TextureButton")
+
+[node name="NotEnoughResources" parent="." instance=ExtResource("22_wtrd2")]
+delay = 1.0
+visible = false
+
+[editable path="CanvasLayer"]
+[editable path="CanvasLayer/TextureProgressBar"]

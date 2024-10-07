@@ -1,12 +1,15 @@
 use core::f64;
 
+use godot::builtin::Array;
 use godot::builtin::Rect2i;
 use godot::builtin::Variant;
 use godot::builtin::Vector2;
 use godot::builtin::Vector2i;
 use godot::classes::ITileMapLayer;
+use godot::classes::PackedScene;
 use godot::classes::TileMapLayer;
 use godot::obj::Base;
+use godot::obj::Gd;
 use godot::obj::WithBaseField;
 use godot::prelude::godot_api;
 use godot::prelude::GodotClass;
@@ -21,7 +24,9 @@ struct DefenseLayer{
     update_phys_interval: i32,
     phys_clock: i32,
     #[export]
-    rect: Rect2i
+    rect: Rect2i,
+    #[export]
+    audio_scene_arr: Array<Gd<PackedScene>>
 }
 
 #[godot_api]
@@ -73,6 +78,8 @@ impl DefenseLayer{
             Vector2i::new(0, 1)
         ];
 
+        let mut c:Vec<u8> = vec![0,0,0];
+
         for y in 0..range.y{
             for x in 0..range.x{
                 let i = Self::map_vec_to_index(rect, Vector2i::new(x, y));
@@ -92,11 +99,28 @@ impl DefenseLayer{
                 let tile_pos = Vector2i::new(x, y)+pos;
                 for e in events{
                     self.base_mut().emit_signal(e.get_event_name().into(),&[Variant::from((tile_pos.cast_float() + Vector2::new(0.5, 0.5)) * TILE_SIZE)]);
+                    let event_index = e.get_event_index();
+                    let e = c.get(event_index).expect("event index out of range!");
+                    if *e < 4{
+                        c[event_index] = e + 1;
+                    }
                 }
                 let t = cell_rules.next_cell(&neighbors);
                 if t.can_set(){
                     self.base_mut().set_cell_ex(tile_pos).atlas_coords(t.to_atlas_coords()).source_id(0).done();
                 }
+            }
+        }
+
+        let audio = self.get_audio_scene_arr();
+        for n in 0..c.len(){
+            let scene = audio.get(n);
+            if scene.is_none(){
+                continue;
+            }
+            for _ in 0..*c.get(n).unwrap() as usize{
+                let s = scene.clone().unwrap().instantiate().unwrap();
+                self.base_mut().add_child(s);
             }
         }
     }

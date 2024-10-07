@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://41wb4hgqmteh"]
 
-[ext_resource type="Texture2D" uid="uid://hc0jekohar55" path="res://tilemap/icon.svg" id="1_fwo78"]
+[ext_resource type="Texture2D" uid="uid://d3cxxnndc1grf" path="res://sprites/h7.png" id="1_e3cft"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cyphp"]
 size = Vector2(26, 26)
@@ -15,8 +15,8 @@ power = 1
 hitbox = NodePath("Hitbox")
 
 [node name="Hellfire" type="Sprite2D" parent="SmallProjectile"]
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("1_fwo78")
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_e3cft")
 
 [node name="Hitbox" type="Area2D" parent="SmallProjectile"]
 collision_layer = 0
@@ -31,8 +31,8 @@ power = 1
 hitbox = NodePath("Hitbox")
 
 [node name="Hellfire" type="Sprite2D" parent="SmallProjectile2"]
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("1_fwo78")
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_e3cft")
 
 [node name="Hitbox" type="Area2D" parent="SmallProjectile2"]
 collision_layer = 0
@@ -47,8 +47,8 @@ power = 1
 hitbox = NodePath("Hitbox")
 
 [node name="Hellfire" type="Sprite2D" parent="SmallProjectile3"]
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("1_fwo78")
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_e3cft")
 
 [node name="Hitbox" type="Area2D" parent="SmallProjectile3"]
 collision_layer = 0
@@ -62,8 +62,8 @@ power = 1
 hitbox = NodePath("Hitbox")
 
 [node name="Hellfire" type="Sprite2D" parent="SmallProjectile4"]
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("1_fwo78")
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_e3cft")
 
 [node name="Hitbox" type="Area2D" parent="SmallProjectile4"]
 collision_layer = 0

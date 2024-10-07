@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://dj8p07ovxy33u"]
+
+[ext_resource type="LabelSettings" uid="uid://cy7ouawxe8t51" path="res://ui/titles.tres" id="1_hv5ns"]
+
+[node name="LayerHideAfter" type="LayerHideAfter"]
+
+[node name="Label" type="Label" parent="."]
+offset_left = 40.0
+offset_top = 48.0
+offset_right = 1786.0
+offset_bottom = 342.0
+text = "YOU DON'T HAVE ENOUGH ENERGY TO DO THIS!!!
+LOOK AT THE YELLOW/BLUE BAR, EACH PLACEMENT 
+CONSUMES SOME FOR EACH ALIVE CELL YOU PLACE"
+label_settings = ExtResource("1_hv5ns")

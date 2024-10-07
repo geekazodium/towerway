@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use godot::{builtin::Callable, classes::{BaseButton, INode}, global::godot_warn, obj::{Base, Gd, WithBaseField}, prelude::{godot_api, GodotClass}};
+use godot::{builtin::Callable, classes::{BaseButton, INode}, global::{godot_print, godot_warn}, obj::{Base, Gd, WithBaseField}, prelude::{godot_api, GodotClass}};
 use godot::classes::Node;
 
 
@@ -47,6 +47,7 @@ impl IngameStateTracker{
             self.state = GameplayState::DRAWING;
             self.get_drawing_done_button().unwrap().set_visible(true);
             self.base_mut().emit_signal(START_DRAW_SIGNAL.into(), &[]);
+            godot_print!("end_wave");
         }else{
             self.warn_state_change_invalid(GameplayState::DRAWING);
         }
@@ -57,6 +58,7 @@ impl IngameStateTracker{
             self.state = GameplayState::DEFENDING;
             self.get_drawing_done_button().unwrap().set_visible(false);
             self.base_mut().emit_signal(START_WAVE_SIGNAL.into(), &[]);
+            godot_print!("end_drawing");
         }else{
             self.warn_state_change_invalid(GameplayState::DEFENDING);
         }
@@ -67,8 +69,9 @@ impl IngameStateTracker{
             self.state = GameplayState::DEAD;
             self.get_drawing_done_button().unwrap().set_visible(false);
             self.base_mut().emit_signal(DEATH_SIGNAL.into(), &[]);
+            godot_print!("dead");
         }else {
-            self.warn_state_change_invalid(GameplayState::DEAD);
+            //self.warn_state_change_invalid(GameplayState::DEAD);
         }
     }
     #[func]
@@ -76,6 +79,7 @@ impl IngameStateTracker{
         if self.get_state() == GameplayState::DEFENDING{
             self.state = GameplayState::SUCCESS;
             self.base_mut().emit_signal(WIN_SIGNAL.into(), &[]);
+            godot_print!("you won");
         }else {
             self.warn_state_change_invalid(GameplayState::SUCCESS);
         }

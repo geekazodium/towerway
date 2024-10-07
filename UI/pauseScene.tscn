@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://dp821wp0s6ejt"]
+[gd_scene load_steps=8 format=3 uid="uid://dp821wp0s6ejt"]
 
 [ext_resource type="Texture2D" uid="uid://cngvpgt2g3raa" path="res://sprites/UI/Pausing_background.png" id="1_vmsxw"]
 [ext_resource type="Texture2D" uid="uid://crjpxlhvi75n5" path="res://sprites/UI/Pausing_BackToGame.png" id="2_rflhc"]
 [ext_resource type="Texture2D" uid="uid://bemdwxcbgqejp" path="res://sprites/UI/Pausing_QuitGame.png" id="3_hjwsw"]
+[ext_resource type="Script" path="res://scripts/UI/ReturnToGame.cs" id="3_ps0ji"]
 [ext_resource type="Script" path="res://scripts/UI/ExitButton.cs" id="4_ec6h5"]
 [ext_resource type="Texture2D" uid="uid://b48k62tdnhe3o" path="res://sprites/UI/Pausing_ReturnToMenu.png" id="5_siws7"]
 [ext_resource type="Script" path="res://scripts/UI/ReturnToMenuButton.cs" id="6_ovobj"]
@@ -15,26 +16,33 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PausingBackground" type="Sprite2D" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="PausingBackground" type="Sprite2D" parent="CanvasLayer"]
 position = Vector2(960, 540)
 texture = ExtResource("1_vmsxw")
 
-[node name="PausingBackToGame" type="Sprite2D" parent="."]
+[node name="PausingBackToGame" type="Sprite2D" parent="CanvasLayer"]
 position = Vector2(960, 540)
 texture = ExtResource("2_rflhc")
 
-[node name="Button" type="Button" parent="PausingBackToGame"]
+[node name="Button" type="Button" parent="CanvasLayer/PausingBackToGame" node_paths=PackedStringArray("root_node")]
+process_mode = 3
 modulate = Color(1, 1, 1, 0)
 offset_left = -228.0
 offset_top = -99.0
 offset_right = 235.0
 offset_bottom = -5.0
+script = ExtResource("3_ps0ji")
+root_node = NodePath("../../..")
 
-[node name="PausingQuitGame" type="Sprite2D" parent="."]
+[node name="PausingQuitGame" type="Sprite2D" parent="CanvasLayer"]
 position = Vector2(960, 540)
 texture = ExtResource("3_hjwsw")
 
-[node name="Button" type="Button" parent="PausingQuitGame"]
+[node name="Button" type="Button" parent="CanvasLayer/PausingQuitGame"]
+process_mode = 3
 modulate = Color(1, 1, 1, 0)
 offset_left = -181.0
 offset_top = 121.0
@@ -42,11 +50,12 @@ offset_right = 191.0
 offset_bottom = 222.0
 script = ExtResource("4_ec6h5")
 
-[node name="PausingReturnToMenu" type="Sprite2D" parent="."]
+[node name="PausingReturnToMenu" type="Sprite2D" parent="CanvasLayer"]
 position = Vector2(960, 540)
 texture = ExtResource("5_siws7")
 
-[node name="Button" type="Button" parent="PausingReturnToMenu"]
+[node name="Button" type="Button" parent="CanvasLayer/PausingReturnToMenu"]
+process_mode = 3
 modulate = Color(1, 1, 1, 0)
 offset_left = -271.0
 offset_top = 14.0

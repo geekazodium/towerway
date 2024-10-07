@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://croilwjccd5pk"]
 
-[ext_resource type="Texture2D" uid="uid://hc0jekohar55" path="res://tilemap/icon.svg" id="1_p4cb3"]
+[ext_resource type="SpriteFrames" uid="uid://ksrvobyhc41b" path="res://sprites/enemy/enemy_sprite_frames.tres" id="1_fw6lo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nrqqc"]
 size = Vector2(32, 32)
@@ -8,13 +8,18 @@ size = Vector2(32, 32)
 [node name="BasicTestEnemy" type="BasicEnemy"]
 speed = 130.0
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("1_p4cb3")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+rotation = 1.5708
+scale = Vector2(0.205344, 0.205344)
+sprite_frames = ExtResource("1_fw6lo")
+autoplay = "default"
+frame = 5
+frame_progress = 1.0
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_nrqqc")
 
 [node name="Damageable" type="Damageable" parent="."]

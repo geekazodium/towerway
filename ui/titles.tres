@@ -5,3 +5,5 @@
 [resource]
 font = SubResource("SystemFont_o4nds")
 font_size = 70
+font_color = Color(0.815686, 0.113725, 0.145098, 1)
+outline_size = 3

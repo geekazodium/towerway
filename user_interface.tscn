@@ -1,0 +1,197 @@
+[gd_scene load_steps=19 format=3 uid="uid://cjvh0bcvmrkyj"]
+
+[ext_resource type="Texture2D" uid="uid://byumjt14hpt0r" path="res://ui/images/healthBar_Base.png" id="1_qd2f5"]
+[ext_resource type="Texture2D" uid="uid://cib10y3xblr7" path="res://ui/images/healthBar_fill.png" id="2_nx5yg"]
+[ext_resource type="Texture2D" uid="uid://b6b6jme1utji4" path="res://tilemap/drawable_cells.tres" id="3_hd7j0"]
+[ext_resource type="Texture2D" uid="uid://dwt77pq14a5c2" path="res://tilemap/selected.png" id="4_nlebe"]
+[ext_resource type="PackedScene" uid="uid://oa7qm5cipp65" path="res://ui/level_progress.tscn" id="5_jsjmw"]
+[ext_resource type="Texture2D" uid="uid://ctjcwfhyt7f8e" path="res://ui/images/progressBar_fill_level2.png" id="6_c86gq"]
+
+[sub_resource type="Gradient" id="Gradient_mimr2"]
+offsets = PackedFloat32Array(0, 0.00704225, 0.0140845)
+colors = PackedColorArray(0, 0, 0, 1, 0.0774648, 0.0774648, 0.0774648, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_1se6s"]
+gradient = SubResource("Gradient_mimr2")
+
+[sub_resource type="Gradient" id="Gradient_y701c"]
+offsets = PackedFloat32Array(0, 0.978873, 0.992958, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.0626311, 0.0626311, 0.0626311, 1, 0.802817, 0.802817, 0.802817, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_livaj"]
+gradient = SubResource("Gradient_y701c")
+
+[sub_resource type="InputEventAction" id="InputEventAction_kebdv"]
+action = &"draw_done"
+
+[sub_resource type="Shortcut" id="Shortcut_4qfbp"]
+events = [SubResource("InputEventAction_kebdv")]
+
+[sub_resource type="InputEventAction" id="InputEventAction_andtp"]
+action = &"next_pattern"
+
+[sub_resource type="Shortcut" id="Shortcut_hegaa"]
+events = [SubResource("InputEventAction_andtp")]
+
+[sub_resource type="InputEventAction" id="InputEventAction_rjw76"]
+action = &"prev_pattern"
+
+[sub_resource type="Shortcut" id="Shortcut_6jloj"]
+events = [SubResource("InputEventAction_rjw76")]
+
+[sub_resource type="InputEventAction" id="InputEventAction_lw0b7"]
+action = &"switch_draw_tile"
+
+[sub_resource type="Shortcut" id="Shortcut_tf5wx"]
+events = [SubResource("InputEventAction_lw0b7")]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="ResourceProgressBar" type="TextureProgressBar" parent="."]
+offset_left = 88.0
+offset_top = 80.0
+offset_right = 400.0
+offset_bottom = 104.0
+max_value = 500.0
+nine_patch_stretch = true
+texture_under = SubResource("GradientTexture1D_1se6s")
+texture_progress = SubResource("GradientTexture1D_livaj")
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -56.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+shortcut = SubResource("Shortcut_4qfbp")
+text = "Finish Drawing"
+
+[node name="HealthProgressBar" type="TextureProgressBar" parent="."]
+offset_top = -40.0
+offset_right = 1320.0
+offset_bottom = 312.0
+scale = Vector2(0.4, 0.4)
+min_value = -2.0
+max_value = 10.0
+value = 10.0
+nine_patch_stretch = true
+stretch_margin_left = 250
+stretch_margin_top = 350
+stretch_margin_right = 565
+texture_under = ExtResource("1_qd2f5")
+texture_progress = ExtResource("2_nx5yg")
+
+[node name="NextPatternButton" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -112.0
+offset_right = -8.0
+offset_bottom = -64.0
+grow_horizontal = 0
+grow_vertical = 0
+shortcut = SubResource("Shortcut_hegaa")
+text = "Next Blueprint"
+
+[node name="PrevPatternButton" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -168.0
+offset_right = -8.0
+offset_bottom = -120.0
+grow_horizontal = 0
+grow_vertical = 0
+shortcut = SubResource("Shortcut_6jloj")
+text = "Previous Blueprint"
+
+[node name="SwitchBrushButton" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -224.0
+offset_right = -8.0
+offset_bottom = -176.0
+grow_horizontal = 0
+grow_vertical = 0
+shortcut = SubResource("Shortcut_tf5wx")
+text = "Switch Brush"
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -136.0
+offset_top = -296.0
+offset_right = -8.0
+offset_bottom = -232.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = ExtResource("3_hd7j0")
+
+[node name="SelectedHotbar" type="SelectedHotbar" parent="TextureRect"]
+option_offset = Vector2(64, 0)
+min_pos = Vector2(-96, -32)
+layout_mode = 0
+offset_left = -96.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 96.0
+texture = ExtResource("4_nlebe")
+
+[node name="SelectedBlueprint" type="TextureRect" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = -504.0
+offset_right = 120.0
+offset_bottom = -440.0
+grow_horizontal = 0
+grow_vertical = 0
+rotation = 1.57079
+texture = ExtResource("3_hd7j0")
+
+[node name="SelectedHotbar" type="SelectedHotbar" parent="SelectedBlueprint"]
+option_offset = Vector2(64, 0)
+min_pos = Vector2(-96, -32)
+layout_mode = 0
+offset_left = -96.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 96.0
+texture = ExtResource("4_nlebe")
+
+[node name="TextureProgressBar" parent="." instance=ExtResource("5_jsjmw")]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -9.0
+offset_top = -114.0
+offset_right = 991.0
+offset_bottom = 386.0
+max_value = 4.0
+step = 1.0
+value = 0.0
+texture_progress = ExtResource("6_c86gq")
+
+[editable path="TextureProgressBar"]

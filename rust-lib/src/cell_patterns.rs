@@ -7,7 +7,9 @@ use godot::builtin::Rect2i;
 use godot::builtin::Vector2;
 use godot::builtin::Vector2i;
 use godot::classes::BaseButton;
+use godot::classes::CanvasLayer;
 use godot::classes::Control;
+use godot::classes::ICanvasLayer;
 use godot::classes::INode;
 use godot::classes::ITileMapLayer;
 use godot::classes::Input;
@@ -204,7 +206,9 @@ struct CellPattern {
     #[export]
     energy_source: Option<Gd<PlayerEnergy>>,
     last_mouse_pos: Vector2i,
-    enabled: bool
+    enabled: bool,
+    #[export]
+    not_enough_resources_alert: Option<Gd<LayerHideAfter>>
 }
 
 #[godot_api]
@@ -266,6 +270,10 @@ impl CellPattern{
 
         let cost = self.get_cost();
         if !self.get_energy_source().unwrap().bind().can_use(cost){
+            if Input::singleton().is_action_just_pressed("place_pattern".into()){
+                let mut s = self.get_not_enough_resources_alert().unwrap();
+                s.bind_mut().reset_timer();
+            }
             return;
         }
         let mouse_tile =
@@ -337,7 +345,7 @@ impl CellPattern {
             let cell_rules = CellRules::from_tile(cell_data);
 
             let target_tile = CellRules::from_tile(target.get_cell_tile_data(pos));
-            if target_tile.can_set() || !check_valid {
+            if target_tile.user_replaceable() || !check_valid {
                 target
                     .set_cell_ex(pos)
                     .source_id(0)
@@ -350,5 +358,33 @@ impl CellPattern {
     pub fn update_hover(&self, mut preview: Gd<TileMapLayer>, center: Vector2i) {
         preview.clear();
         self.place(preview, center, false);
+    }
+}
+
+#[derive(GodotClass)]
+#[class(base = CanvasLayer,init)]
+struct LayerHideAfter{
+    base: Base<CanvasLayer>,
+    #[export]
+    delay: f64,
+    timer: f64
+}
+
+#[godot_api]
+impl ICanvasLayer for LayerHideAfter {
+    fn process(&mut self, delta: f64){
+        if self.timer > 0.{
+            self.timer -= delta;
+            if !(self.timer > 0.){
+                self.base_mut().set_visible(false);
+            }
+        }
+    }
+}
+
+impl LayerHideAfter{
+    pub fn reset_timer(&mut self){
+        self.base_mut().set_visible(true);
+        self.timer = self.delay;
     }
 }

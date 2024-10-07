@@ -61,7 +61,7 @@ impl CellRules{
     }
     fn to_cost(&self)->i32{
         match self{
-            Self::Empty => 1,
+            Self::Empty => 0,
             Self::BasicFilled => 6,
             Self::PermaCell => panic!("user probably shouldn't be able to place these, too op"),
             Self::ForceEmpty => 0
@@ -162,6 +162,13 @@ impl CellEvents{
             Self::OverpopulateDeath=>"overpopulate_death",
             Self::ExtraOverpopulateDeath=>"extra_overpopulate_death",
             Self::CellCreate=>"cell_create"
+        }
+    }
+    fn get_event_index(&self) -> usize{
+        match self {
+            Self::CellCreate => 2,
+            Self::ExtraOverpopulateDeath => 1,
+            Self::OverpopulateDeath => 0
         }
     }
 }
@@ -326,3 +333,4 @@ pub mod player_health;
 pub mod ingame_state_tracker;
 pub mod defense_layer;
 pub mod selected_hotbar;
+pub mod pause_state_manager;
