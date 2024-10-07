@@ -25,6 +25,7 @@ use godot::prelude::GodotClass;
 use crate::defense_layer::TILE_SIZE;
 use crate::ingame_state_tracker::GameplayState;
 use crate::ingame_state_tracker::IngameStateTracker;
+use crate::selected_hotbar::SelectedHotbar;
 use crate::CellRules;
 
 #[derive(GodotClass)]
@@ -106,7 +107,11 @@ struct CellPatternToolbox {
     #[export]
     prev_pattern_button: Option<Gd<BaseButton>>,
     #[export]
-    switch_brush_button: Option<Gd<BaseButton>>
+    switch_brush_button: Option<Gd<BaseButton>>,
+    #[export]
+    tile_picker: Option<Gd<SelectedHotbar>>,
+    #[export]
+    blueprint_picker: Option<Gd<SelectedHotbar>>
 }
 
 #[godot_api]
@@ -115,6 +120,8 @@ impl INode for CellPatternToolbox {
         for _ in 0..self.patterns.len(){
             self.switch_next();
         }
+        self.update_tile_picker_display();
+        self.update_blueprint_picker_display();
         self.get_next_pattern_button().unwrap().connect("pressed".into(), Callable::from_object_method(&self.to_gd(), "switch_next"));
         self.get_prev_pattern_button().unwrap().connect("pressed".into(), Callable::from_object_method(&self.to_gd(), "switch_prev"));
         self.get_switch_brush_button().unwrap().connect("pressed".into(),Callable::from_object_method(&self.to_gd(), "switch_brush"));
@@ -123,6 +130,8 @@ impl INode for CellPatternToolbox {
     fn process(&mut self, _delta: f64) {
         let is_drawing = self.get_game_state().bind().get_state() == GameplayState::DRAWING;
         self.get_transparency_pane().unwrap().set_visible(is_drawing);
+        self.get_tile_picker().unwrap().get_parent().unwrap().cast::<Control>().set_visible(is_drawing);
+        self.get_switch_brush_button().unwrap().set_visible(is_drawing);
     }
 }
 
@@ -144,6 +153,7 @@ impl CellPatternToolbox {
             .unwrap()
             .bind_mut()
             .set_enabled(true);
+        self.update_blueprint_picker_display();
     }
 
     #[func]
@@ -162,6 +172,14 @@ impl CellPatternToolbox {
     pub fn switch_brush(&mut self){
         self.selected_tile += 1;
         self.selected_tile = self.selected_tile.rem_euclid(self.brush_tiles.len() as u8);
+        self.update_tile_picker_display();
+    }
+
+    fn update_tile_picker_display(&self){
+        self.get_tile_picker().unwrap().bind_mut().set_selected(self.selected_tile as u32);
+    }
+    fn update_blueprint_picker_display(&self){
+        self.get_blueprint_picker().unwrap().bind_mut().set_selected(self.selected_pattern as u32);
     }
 
     pub fn get_selected_brush_tile(&self) -> u16{

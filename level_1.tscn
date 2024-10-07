@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://xt66sm1ipkd5"]
+[gd_scene load_steps=28 format=4 uid="uid://xt66sm1ipkd5"]
 
 [ext_resource type="TileSet" uid="uid://c5u80tio66lj4" path="res://tilemap/cell_tileset.tres" id="1_mfmjw"]
 [ext_resource type="PackedScene" uid="uid://ddu6j7d1e1je2" path="res://projectiles/weak.tscn" id="2_8pys4"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://b6b6jme1utji4" path="res://tilemap/drawable_cells.tres" id="7_dgekf"]
 [ext_resource type="Curve2D" uid="uid://c6vq27ol1af2u" path="res://curve1.tres" id="7_pbo5x"]
 [ext_resource type="Texture2D" uid="uid://civ0xe71255u8" path="res://ui/background.tres" id="7_rysj2"]
+[ext_resource type="Texture2D" uid="uid://dwt77pq14a5c2" path="res://tilemap/selected.png" id="8_7wesh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8p1uy"]
 shader = ExtResource("5_g11rg")
@@ -125,7 +126,7 @@ energy_per_interval = 10
 display = NodePath("../CanvasLayer/ResourceProgressBar")
 game_state = NodePath("../IngameStateTracker")
 
-[node name="CellPatternToolbox" type="CellPatternToolbox" parent="." node_paths=PackedStringArray("patterns", "gamestate", "transparency_pane", "next_pattern_button", "prev_pattern_button", "switch_brush_button")]
+[node name="CellPatternToolbox" type="CellPatternToolbox" parent="." node_paths=PackedStringArray("patterns", "gamestate", "transparency_pane", "next_pattern_button", "prev_pattern_button", "switch_brush_button", "tile_picker", "blueprint_picker")]
 patterns = [NodePath("CellPattern"), NodePath("CellPattern2"), NodePath("CellPattern3"), NodePath("CellPattern4")]
 brush_tiles = Array[int]([0, 1, 2])
 gamestate = NodePath("../IngameStateTracker")
@@ -133,6 +134,8 @@ transparency_pane = NodePath("../TextureRect")
 next_pattern_button = NodePath("../CanvasLayer/NextPatternButton")
 prev_pattern_button = NodePath("../CanvasLayer/PrevPatternButton")
 switch_brush_button = NodePath("../CanvasLayer/SwitchBrushButton")
+tile_picker = NodePath("../CanvasLayer/TextureRect/SelectedHotbar")
+blueprint_picker = NodePath("../CanvasLayer/SelectedBlueprint/SelectedHotbar")
 
 [node name="CellPattern" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source")]
 bounds = Rect2i(-3, -3, 4, 4)
@@ -260,6 +263,34 @@ offset_top = 784.0
 offset_right = 1912.0
 offset_bottom = 848.0
 texture = ExtResource("7_dgekf")
+
+[node name="SelectedHotbar" type="SelectedHotbar" parent="CanvasLayer/TextureRect"]
+option_offset = Vector2(64, 0)
+min_pos = Vector2(-96, -32)
+layout_mode = 0
+offset_left = -96.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 96.0
+texture = ExtResource("8_7wesh")
+
+[node name="SelectedBlueprint" type="TextureRect" parent="CanvasLayer"]
+offset_left = 1696.0
+offset_top = 896.0
+offset_right = 1824.0
+offset_bottom = 960.0
+rotation = 1.57079
+texture = ExtResource("7_dgekf")
+
+[node name="SelectedHotbar" type="SelectedHotbar" parent="CanvasLayer/SelectedBlueprint"]
+option_offset = Vector2(64, 0)
+min_pos = Vector2(-96, -32)
+layout_mode = 0
+offset_left = -96.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 96.0
+texture = ExtResource("8_7wesh")
 
 [node name="EnemyPath" type="EnemyPath" parent="." node_paths=PackedStringArray("player_health")]
 player_health = NodePath("../PlayerHealth")
