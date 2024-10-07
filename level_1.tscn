@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=4 uid="uid://xt66sm1ipkd5"]
+[gd_scene load_steps=27 format=4 uid="uid://xt66sm1ipkd5"]
 
 [ext_resource type="TileSet" uid="uid://c5u80tio66lj4" path="res://tilemap/cell_tileset.tres" id="1_mfmjw"]
 [ext_resource type="PackedScene" uid="uid://ddu6j7d1e1je2" path="res://projectiles/weak.tscn" id="2_8pys4"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://croilwjccd5pk" path="res://enemies/basic_test_enemy.tscn" id="4_lby1b"]
 [ext_resource type="Shader" path="res://tilemap/transparency.gdshader" id="5_g11rg"]
 [ext_resource type="PackedScene" uid="uid://b6mkqdrg3vfoc" path="res://ui/game_over_ui.tscn" id="6_uu67t"]
+[ext_resource type="Texture2D" uid="uid://b6b6jme1utji4" path="res://tilemap/drawable_cells.tres" id="7_dgekf"]
 [ext_resource type="Curve2D" uid="uid://c6vq27ol1af2u" path="res://curve1.tres" id="7_pbo5x"]
 [ext_resource type="Texture2D" uid="uid://civ0xe71255u8" path="res://ui/background.tres" id="7_rysj2"]
 
@@ -44,6 +45,24 @@ colors = PackedColorArray(1, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_p57ye"]
 gradient = SubResource("Gradient_e4o60")
+
+[sub_resource type="InputEventAction" id="InputEventAction_andtp"]
+action = &"next_pattern"
+
+[sub_resource type="Shortcut" id="Shortcut_hegaa"]
+events = [SubResource("InputEventAction_andtp")]
+
+[sub_resource type="InputEventAction" id="InputEventAction_rjw76"]
+action = &"prev_pattern"
+
+[sub_resource type="Shortcut" id="Shortcut_6jloj"]
+events = [SubResource("InputEventAction_rjw76")]
+
+[sub_resource type="InputEventAction" id="InputEventAction_lw0b7"]
+action = &"switch_draw_tile"
+
+[sub_resource type="Shortcut" id="Shortcut_tf5wx"]
+events = [SubResource("InputEventAction_lw0b7")]
 
 [node name="Node2D" type="Node2D"]
 
@@ -97,19 +116,23 @@ max_health = 10
 health = 10
 game_over_scene = ExtResource("6_uu67t")
 game_state = NodePath("../IngameStateTracker")
-health_bar = NodePath("../CanvasLayer/TextureProgressBar2")
+health_bar = NodePath("../CanvasLayer/HealthProgressBar")
 
-[node name="PlayerEnergy" type="PlayerEnergy" parent="." node_paths=PackedStringArray("display")]
+[node name="PlayerEnergy" type="PlayerEnergy" parent="." node_paths=PackedStringArray("display", "game_state")]
 max_energy = 500
 energy_interval = 0.5
 energy_per_interval = 10
-display = NodePath("../CanvasLayer/TextureProgressBar")
+display = NodePath("../CanvasLayer/ResourceProgressBar")
+game_state = NodePath("../IngameStateTracker")
 
-[node name="CellPatternToolbox" type="CellPatternToolbox" parent="." node_paths=PackedStringArray("patterns", "gamestate", "transparency_pane")]
+[node name="CellPatternToolbox" type="CellPatternToolbox" parent="." node_paths=PackedStringArray("patterns", "gamestate", "transparency_pane", "next_pattern_button", "prev_pattern_button", "switch_brush_button")]
 patterns = [NodePath("CellPattern"), NodePath("CellPattern2"), NodePath("CellPattern3"), NodePath("CellPattern4")]
 brush_tiles = Array[int]([0, 1, 2])
 gamestate = NodePath("../IngameStateTracker")
 transparency_pane = NodePath("../TextureRect")
+next_pattern_button = NodePath("../CanvasLayer/NextPatternButton")
+prev_pattern_button = NodePath("../CanvasLayer/PrevPatternButton")
+switch_brush_button = NodePath("../CanvasLayer/SwitchBrushButton")
 
 [node name="CellPattern" type="CellPattern" parent="CellPatternToolbox" node_paths=PackedStringArray("target", "preview", "energy_source")]
 bounds = Rect2i(-3, -3, 4, 4)
@@ -151,7 +174,7 @@ tile_set = ExtResource("1_mfmjw")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="CanvasLayer"]
+[node name="ResourceProgressBar" type="TextureProgressBar" parent="CanvasLayer"]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 320.0
@@ -168,13 +191,16 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -128.0
-offset_top = -40.0
+offset_left = -168.0
+offset_top = -56.0
+offset_right = -8.0
+offset_bottom = -8.0
 grow_horizontal = 0
 grow_vertical = 0
 shortcut = SubResource("Shortcut_4qfbp")
+text = "Finish Drawing"
 
-[node name="TextureProgressBar2" type="TextureProgressBar" parent="CanvasLayer"]
+[node name="HealthProgressBar" type="TextureProgressBar" parent="CanvasLayer"]
 offset_left = 8.0
 offset_top = 32.0
 offset_right = 320.0
@@ -182,6 +208,58 @@ offset_bottom = 48.0
 nine_patch_stretch = true
 texture_under = SubResource("GradientTexture1D_rehmh")
 texture_progress = SubResource("GradientTexture1D_p57ye")
+
+[node name="NextPatternButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -112.0
+offset_right = -8.0
+offset_bottom = -64.0
+grow_horizontal = 0
+grow_vertical = 0
+shortcut = SubResource("Shortcut_hegaa")
+text = "Next Blueprint"
+
+[node name="PrevPatternButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -168.0
+offset_right = -8.0
+offset_bottom = -120.0
+grow_horizontal = 0
+grow_vertical = 0
+shortcut = SubResource("Shortcut_6jloj")
+text = "Previous Blueprint"
+
+[node name="SwitchBrushButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -224.0
+offset_right = -8.0
+offset_bottom = -176.0
+grow_horizontal = 0
+grow_vertical = 0
+shortcut = SubResource("Shortcut_tf5wx")
+text = "Switch Brush"
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+offset_left = 1784.0
+offset_top = 784.0
+offset_right = 1912.0
+offset_bottom = 848.0
+texture = ExtResource("7_dgekf")
 
 [node name="EnemyPath" type="EnemyPath" parent="." node_paths=PackedStringArray("player_health")]
 player_health = NodePath("../PlayerHealth")

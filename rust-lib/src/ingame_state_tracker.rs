@@ -25,7 +25,7 @@ impl INode for IngameStateTracker {
     }
     fn ready(&mut self){
         self.end_wave();
-        self.get_drawing_done_button().unwrap().connect("button_up".into(), Callable::from_object_method(&self.base_mut(), "end_drawing"));
+        self.get_drawing_done_button().unwrap().connect("pressed".into(), Callable::from_object_method(&self.base_mut(), "end_drawing"));
     }
 }
 

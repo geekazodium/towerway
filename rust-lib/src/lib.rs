@@ -325,3 +325,4 @@ pub mod cell_patterns;
 pub mod player_health;
 pub mod ingame_state_tracker;
 pub mod defense_layer;
+pub mod selected_hotbar;
