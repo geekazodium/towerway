@@ -13,17 +13,16 @@ use godot::classes::Node;
 use godot::classes::TextureProgressBar;
 use godot::classes::TileMapLayer;
 use godot::classes::Viewport;
-use godot::global::godot_print;
 use godot::obj::Base;
 use godot::obj::Gd;
 use godot::obj::WithBaseField;
 use godot::prelude::godot_api;
 use godot::prelude::GodotClass;
 
+use crate::defense_layer::TILE_SIZE;
 use crate::ingame_state_tracker::GameplayState;
 use crate::ingame_state_tracker::IngameStateTracker;
 use crate::CellRules;
-use crate::TILE_SIZE;
 
 #[derive(GodotClass)]
 #[class(base = Node,init)]
