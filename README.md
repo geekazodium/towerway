@@ -1,6 +1,6 @@
 # Tower Defense + Conway Game of Life
 
-Game is available on itch at https://pearstar.itch.io/child-of-entropy[https://pearstar.itch.io/child-of-entropy]
+Game is available on itch at https://pearstar.itch.io/child-of-entropy
 
 ## Development Setup:
 
